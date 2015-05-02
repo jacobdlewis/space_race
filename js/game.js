@@ -2,6 +2,9 @@ game.state.add('playgame', { preload: preload, create:create, update:update });
 
 
 var platformX;
+var myId=0;
+var eurecaServer;
+var ready = false;
 
 function preload () {
   game.load.image( 'platform', '/assets/basic_platform.png');
@@ -12,7 +15,7 @@ function preload () {
 function create () {
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
-  background = game.add.sprite(0, 0, 'background');
+  game.bg = game.add.tileSprite(0, 0, 320, 9000, 'background');
   player = game.add.sprite(250, 300, 'player');
   platform = game.add.sprite(160, 400, 'platform');
 
@@ -24,8 +27,11 @@ function create () {
 
   cursors = game.input.keyboard.createCursorKeys();
 
-  background.inputEnabled = true;
-  background.events.onInputDown.add(setPlatform, this);
+  game.bg.inputEnabled = true;
+  game.bg.events.onInputDown.add(setPlatform, this);
+
+  game.cameraLastX = game.camera.x;
+  game.cameraLastY = game.camera.y;
 
 }
 
@@ -50,6 +56,13 @@ function update () {
     player.body.velocity.y = 100;
   }
 
+  if(game.camera.y !== game.cameraLastY) {
+    game.bg.y -= 0.4 * (game.cameraLastY - game.camera.y);
+    game.cameraLastY = game.camera.y;
+  }
+
+  game.camera.position.y -= 10;
+
 }
 
 function setPlatform () {
@@ -57,4 +70,26 @@ function setPlatform () {
   game.physics.enable(platformX, Phaser.Physics.ARCADE);
   platformX.body.immovable = true;
 }
+
+var eurecaClientSetup = function() {
+    //create an instance of eureca.io client
+    var eurecaClient = new Eureca.Client();
+
+    eurecaClient.ready(function (proxy) {
+        eurecaServer = proxy;
+    });
+
+
+    //methods defined under "exports" namespace become available in the server side
+
+    eurecaClient.exports.setId = function(id)
+    {
+        //create() is moved here to make sure nothing is created before uniq id assignation
+        myId = id;
+        create();
+        eurecaServer.handshake();
+        ready = true;
+    };
+
+};
 
