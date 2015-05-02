@@ -24,22 +24,21 @@ function create () {
   game.world.setBounds(0, 0, 320, 9000);
 
   game.background = game.add.tileSprite(0, 0, 320, 9000, 'background');
-  player = game.add.sprite(130, 8800, 'player');
-  startingSpace = game.add.sprite(110, 8850, 'platform');
-
-  game.physics.enable(player, Phaser.Physics.ARCADE);
-  player.body.gravity.y = playerGravity;
-  game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
-  startingSpace.body.immovable = true;
-
-  cursors = game.input.keyboard.createCursorKeys();
-
   game.background.inputEnabled = true;
   game.background.events.onInputDown.add(setPlatform, this);
 
+  startingSpace = game.add.sprite(110, 8850, 'platform');
+  game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
+  startingSpace.body.immovable = true;
+
+  player = game.add.sprite(130, 8800, 'player');
+  game.physics.enable(player, Phaser.Physics.ARCADE);
+  player.body.gravity.y = playerGravity;
+
+  cursors = game.input.keyboard.createCursorKeys();
+
   game.cameraLastX = game.camera.x;
   game.cameraLastY = game.camera.y;
-
   game.camera.y = 9000;
 
   platformGroup = game.add.physicsGroup();
