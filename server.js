@@ -3,7 +3,11 @@ var express = require('express')
   , server = require('http').createServer(app);
 
 // serve static files from the current directory
-app.use(express.static(__dirname));
+app.set('port', (process.env.PORT || 8000));
+app.use(express.static(__dirname+"/public"));
+app.get('/', function(req, res){
+  res.sendFile(__dirname+'/index.html');
+});
 
 //we'll keep clients data here
 var clients = {};
@@ -96,4 +100,4 @@ eurecaServer.exports.distribute = function(action,args) {
     }
 }
 
-server.listen(8000);
+server.listen(process.env.PORT || 8000);

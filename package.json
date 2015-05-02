@@ -1,14 +1,17 @@
 {
   "name": "space_race",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/jacobdlewis/space_race.git"
+  },
+  "engines": {
+    "node": "0.12.x"
   },
   "author": "",
   "license": "MIT",
@@ -17,6 +20,7 @@
   },
   "homepage": "https://github.com/jacobdlewis/space_race",
   "dependencies": {
+    "bower": "^1.3.12",
     "express": "4.12.x",
     "engine.io": "1.5.x",
     "eureca.io": "0.6.x"
