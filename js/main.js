@@ -1,0 +1,1 @@
+var game = new Phaser.Game(800, 1200, Phaser.AUTO, 'game-holder');

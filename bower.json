@@ -1,0 +1,19 @@
+{
+  "name": "space_race",
+  "version": "0.0.0",
+  "homepage": "https://github.com/jacobdlewis/space_race",
+  "authors": [
+    "jacobdlewis <jacobdlewis@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "phaser": "~2.3.0"
+  }
+}
