@@ -3,7 +3,11 @@ var express = require('express')
   , server = require('http').createServer(app);
 
 // serve static files from the current directory
-app.use(express.static(__dirname));
+app.set('port', (process.env.PORT || 8000));
+app.use(express.static(__dirname+"/public"));
+app.get('/', function(req, res){
+  res.sendFile(__dirname+'/index.html');
+});
 
 //we'll keep clients data here
 var clients = {};
@@ -16,7 +20,7 @@ var gameList = {}
 var EurecaServer = require('eureca.io').EurecaServer;
 
 //create an instance of EurecaServer
-var eurecaServer = new EurecaServer({allow:['setId', 'setPlayerType', 'kill', 'updateState']});
+var eurecaServer = new EurecaServer({allow:['setId', 'setPlayerType', 'kill', 'updateState','interact']});
 
 //attach eureca.io to our http server
 eurecaServer.attach(server);
@@ -87,4 +91,13 @@ eurecaServer.exports.handleKeys = function (keys) {
     }
     clients[conn.id].laststate = keys;
 }
-server.listen(8000);
+
+
+eurecaServer.exports.distribute = function(action,args) {
+    for (var c in clients){
+        //execute action on client side of all clients
+        clients[c].remote.interact(action,args);
+    }
+}
+
+server.listen(process.env.PORT || 8000);
