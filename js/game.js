@@ -16,6 +16,7 @@ var leftButton;
 var leftButtonDown = false;
 var rightButton;
 var rightButtonDown = false;
+var currentPlatformType = "solid";
 
 function preload () {
   game.load.image( 'platform', '/assets/basic_platform.png');
@@ -23,6 +24,12 @@ function preload () {
   game.load.image( 'background', '/assets/space_race_bg_2_320.jpg');
   game.load.image( 'leftButton', '/assets/LeftButton.png');
   game.load.image( 'rightButton', '/assets/RightButton.png');
+  game.load.image( 'solidPlatform', '/assets/solid_platform.png');
+  game.load.image( 'icePlatform', '/assets/ice_platform.png');
+  game.load.image( 'bouncePlatform', '/assets/bounce_platform.png');
+  game.load.image( 'spikePlatform', '/assets/spike_platform.png');
+  game.load.image( 'stickyPlatform', '/assets/sticky_platform.png');
+  game.load.image( 'holePlatform', '/assets/hole_platform.png');
 }
 
 function create () {
@@ -41,16 +48,41 @@ function create () {
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.gravity.y = playerGravity;
 
-  leftButton = game.add.sprite(10, 410, 'leftButton');
-  leftButton.fixedToCamera = true;
-  leftButton.inputEnabled = true;
-  leftButton.events.onInputDown.add(movePlayerLeft, this);
-  leftButton.events.onInputUp.add(leftButtonUp, this);
-  rightButton = game.add.sprite(260, 410, 'rightButton');
-  rightButton.fixedToCamera = true;
-  rightButton.inputEnabled = true;
-  rightButton.events.onInputDown.add(movePlayerRight, this);
-  rightButton.events.onInputUp.add(rightButtonUp, this);
+  // leftButton = game.add.sprite(10, 410, 'leftButton');
+  // leftButton.fixedToCamera = true;
+  // leftButton.inputEnabled = true;
+  // leftButton.events.onInputDown.add(movePlayerLeft, this);
+  // leftButton.events.onInputUp.add(leftButtonUp, this);
+  // rightButton = game.add.sprite(260, 410, 'rightButton');
+  // rightButton.fixedToCamera = true;
+  // rightButton.inputEnabled = true;
+  // rightButton.events.onInputDown.add(movePlayerRight, this);
+  // rightButton.events.onInputUp.add(rightButtonUp, this);
+
+  solidPlatform = game.add.sprite(0, 400, 'solidPlatform');
+  solidPlatform.fixedToCamera = true;
+  solidPlatform.inputEnabled = true;
+  solidPlatform.events.onInputDown.add(selectSolid, this);
+  icePlatform = game.add.sprite(100, 400, 'icePlatform');
+  icePlatform.fixedToCamera = true;
+  icePlatform.inputEnabled = true;
+  icePlatform.events.onInputDown.add(selectIce, this);
+  bouncePlatform = game.add.sprite(200, 400, 'bouncePlatform');
+  bouncePlatform.fixedToCamera = true;
+  bouncePlatform.inputEnabled = true;
+  bouncePlatform.events.onInputDown.add(selectBounce, this);
+  spikePlatform = game.add.sprite(0, 440, 'spikePlatform');
+  spikePlatform.fixedToCamera = true;
+  spikePlatform.inputEnabled = true;
+  spikePlatform.events.onInputDown.add(selectSpike, this);
+  stickyPlatform = game.add.sprite(100, 440, 'stickyPlatform');
+  stickyPlatform.fixedToCamera = true;
+  stickyPlatform.inputEnabled = true;
+  stickyPlatform.events.onInputDown.add(selectSticky, this);
+  holePlatform = game.add.sprite(200, 440, 'holePlatform');
+  holePlatform.fixedToCamera = true;
+  holePlatform.inputEnabled = true;
+  holePlatform.events.onInputDown.add(selectHole, this);
 
 
   cursors = game.input.keyboard.createCursorKeys();
@@ -128,6 +160,25 @@ function movePlayerLeft () {
 }
 function leftButtonUp () {
   leftButtonDown = false;
+}
+
+function selectSolid () {
+  currentPlatformType = "solid";
+}
+function selectIce () {
+  currentPlatformType = "ice";
+}
+function selectBounce () {
+  currentPlatformType = "bounce";
+}
+function selectSpike () {
+  currentPlatformType = "spike";
+}
+function selectSticky () {
+  currentPlatformType = "sticky";
+}
+function selectHole () {
+  currentPlatformType = "hole";
 }
 
 function setPlatform () {
