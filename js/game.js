@@ -9,6 +9,7 @@ var gameStarted = false;
 var platformX;
 var cursorX;
 var cursorY;
+var maxPlatforms = 2;
 
 function preload () {
   game.load.image( 'platform', '/assets/basic_platform.png');
@@ -78,6 +79,7 @@ function update () {
 
 function setPlatform () {
   var p = platformGroup.children.length - 1;
+  var livingChildren = platformGroup.countLiving();
   if (!platformGroup.children[0]) {
     platform1 = platformGroup.create(cursorX, cursorY, 'platform');
     platform1.enableBody = true;
@@ -86,7 +88,11 @@ function setPlatform () {
     platform1 = platformGroup.create(cursorX, cursorY, 'platform');
     platform1.enableBody = true;
     platform1.body.immovable = true;
+    if (livingChildren >= maxPlatforms) {
+      platformGroup.children[0].destroy();
+    }
   }
+
 
 }
 
