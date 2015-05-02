@@ -6,9 +6,11 @@ function preload() {
 }
 
 function create() {
-  menu = game.add.sprite(0, 0, 'menu');
+  menu = game.add.sprite(0, 380, 'menu');
   menu.inputEnabled = true;
   menu.events.onInputDown.add(startGame, this);
+  var ENTER = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+  ENTER.onDown.add(startGame)
 }
 
 function startGame () {

@@ -6,6 +6,7 @@ var myId=0;
 var eurecaServer;
 var ready = false;
 var nextPlatformTimer = 0;
+var gameStarted = false;
 
 function preload () {
   game.load.image( 'platform', '/assets/basic_platform.png');
@@ -18,8 +19,8 @@ function create () {
   game.world.setBounds(0, 0, 320, 9000);
 
   game.bg = game.add.tileSprite(0, 0, 320, 9000, 'background');
-  player = game.add.sprite(250, 8800, 'player');
-  platform = game.add.sprite(160, 8970, 'platform');
+  player = game.add.sprite(130, 8800, 'player');
+  platform = game.add.sprite(110, 8850, 'platform');
 
 
   game.physics.enable(player, Phaser.Physics.ARCADE);
@@ -53,7 +54,8 @@ function update () {
   }
 
   if (cursors.up.isDown && player.body.touching.down) {
-    player.body.velocity.y = -200;
+    player.body.velocity.y = -300;
+    gameStarted = true;
   }
 
   if(game.camera.y !== game.cameraLastY) {
@@ -61,13 +63,10 @@ function update () {
     game.cameraLastY = game.camera.y;
   }
 
-  game.camera.y -= .05;
+  if (gameStarted ===true) {
+    game.camera.y -= .05;
+  }
 
-  // if(game.input.onMouseDown() && game.time.now > nextPlatformTimer) {
-  //   setPlatform();
-  //   console.log('click');
-  //   nextPlatformTimer = game.time.now + 600;
-  // }
 
 }
 
@@ -76,7 +75,6 @@ function setPlatform () {
   platformX = game.add.sprite(game.input.x - 50, positionY, 'platform');
   game.physics.enable(platformX, Phaser.Physics.ARCADE);
   platformX.body.immovable = true;
-  console.log('yes ' + positionY);
 }
 
 var eurecaClientSetup = function() {
