@@ -12,11 +12,17 @@ var cursorY;
 var maxPlatforms = 2;
 var cameraScrollRate = .05;
 var playerGravity = 350;
+var leftButton;
+var leftButtonDown = false;
+var rightButton;
+var rightButtonDown = false;
 
 function preload () {
   game.load.image( 'platform', '/assets/basic_platform.png');
   game.load.image( 'player', '/assets/player.png');
-  game.load.image( 'background', '/assets/background.png');
+  game.load.image( 'background', '/assets/space_race_bg_2_320.jpg');
+  game.load.image( 'leftButton', '/assets/LeftButton.png');
+  game.load.image( 'rightButton', '/assets/RightButton.png');
 }
 
 function create () {
@@ -27,13 +33,25 @@ function create () {
   game.background.inputEnabled = true;
   game.background.events.onInputDown.add(setPlatform, this);
 
-  startingSpace = game.add.sprite(110, 8850, 'platform');
+  startingSpace = game.add.sprite(110, 8880, 'platform');
   game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
   startingSpace.body.immovable = true;
 
   player = game.add.sprite(130, 8800, 'player');
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.gravity.y = playerGravity;
+
+  leftButton = game.add.sprite(10, 410, 'leftButton');
+  leftButton.fixedToCamera = true;
+  leftButton.inputEnabled = true;
+  leftButton.events.onInputDown.add(movePlayerLeft, this);
+  leftButton.events.onInputUp.add(leftButtonUp, this);
+  rightButton = game.add.sprite(260, 410, 'rightButton');
+  rightButton.fixedToCamera = true;
+  rightButton.inputEnabled = true;
+  rightButton.events.onInputDown.add(movePlayerRight, this);
+  rightButton.events.onInputUp.add(rightButtonUp, this);
+
 
   cursors = game.input.keyboard.createCursorKeys();
 
@@ -52,10 +70,10 @@ function update () {
   game.physics.arcade.collide(player, startingSpace);
   game.physics.arcade.collide(player, platformGroup);
 
-  if (cursors.left.isDown) {
-    player.body.velocity.x = -100
-  } else if (cursors.right.isDown) {
-    player.body.velocity.x = 200;
+  if (cursors.left.isDown || leftButtonDown) {
+    player.body.velocity.x = -150
+  } else if (cursors.right.isDown || rightButtonDown) {
+    player.body.velocity.x = 150;
   } else {
     player.body.velocity.x = 0;
   }
@@ -76,6 +94,7 @@ function update () {
 
   cursorX = game.input.x - 50;
   cursorY = (game.world.y * -1) + game.input.y;
+  console.log(cursorX, cursorY);
 
   if (player.x < 0) {
     player.x = 300;
@@ -93,6 +112,22 @@ function update () {
     cameraScrollRate = 1;
   }
 
+}
+
+function movePlayerRight () {
+  rightButtonDown = true;
+  player.body.velocity.x = 150;
+}
+function rightButtonUp () {
+  rightButtonDown = false;
+}
+
+function movePlayerLeft () {
+  leftButtonDown = true;
+  player.body.velocity.x = -150;
+}
+function leftButtonUp () {
+  leftButtonDown = false;
 }
 
 function setPlatform () {
