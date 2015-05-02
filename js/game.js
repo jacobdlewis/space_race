@@ -43,7 +43,7 @@ var currentPlatformType = "solid";
 function preload () {
   game.load.image( 'platform', '/assets/basic_platform.png');
   game.load.image( 'player', '/assets/player.png');
-  game.load.image( 'background', '/assets/space_race_bg_2_320.jpg');
+  game.load.image( 'background', '/assets/space_race_bg_generic_320.jpg');
   game.load.image( 'leftButton', '/assets/LeftButton.png');
   game.load.image( 'rightButton', '/assets/RightButton.png');
   game.load.image( 'solidPlatform', '/assets/solid_platform.png');
@@ -59,7 +59,7 @@ function createGame () {
   game.physics.startSystem(Phaser.Physics.ARCADE);
   game.world.setBounds(0, 0, 320, 9000);
 
-  game.background = game.add.tileSprite(0, 0, 320, 9000, 'background');
+  game.background = game.add.sprite(0, -400, 'background');
   game.background.inputEnabled = true;
   game.background.events.onInputDown.add(setPlatform, this);
 
@@ -151,7 +151,7 @@ function update () {
 
     cursorX = game.input.x - 50;
     cursorY = (game.world.y * -1) + game.input.y;
-    console.log(cursorX, cursorY);
+    console.log(game.camera.y)
 
     if (player.x < 0) {
       player.x = 300;
@@ -169,7 +169,11 @@ function update () {
       cameraScrollRate = 1;
     }
 
-}
+    if (player.y > game.camera.y + 480) {
+      gameOverText = game.add.text(game.camera.x + 70, game.camera.y + 160, "GAME OVER", { fontSize: '32px', fill: 'white' });
+      cameraScrollRate = 0;
+    }
+  }
 
 function movePlayerRight () {
   rightButtonDown = true;
