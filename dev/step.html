@@ -1,0 +1,139 @@
+<!doctype html>
+
+<html lang="en-US">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Space Race</title>
+  </head>
+
+    <body>
+    <script src="../node_modules/tone/build/tone.js"></script>
+
+
+    <script>
+
+    function Soundtrack() {
+        var self = this;
+
+        this.bg = {
+            noise: new Tone.Noise("white"),
+            filter: new Tone.Filter(200, "bandpass"),
+            filter2: new Tone.Filter(250, "bandpass"),
+            create: function() {
+                // first filter
+                this.filter.Q.value = 100
+                this.noise.volume.value = 25;
+                this.noise.connect(this.filter)
+                this.filter.toMaster();
+                // second filter
+                this.filter2.Q.value = 70
+                this.noise.connect(this.filter2)
+                this.filter2.toMaster();
+
+            },
+            start: function() {
+                this.noise.start();
+            },
+            stop: function() {
+                this.noise.stop();
+            }
+        }
+
+        this.ping = {
+            create: function() {
+                this.osc = new Tone.Oscillator(400, "sine")
+                this.osc.toMaster()
+            },
+            note: function() {
+                this.osc.start();
+            }
+        }
+
+        this.setup = function() {
+            this.bg.create();
+            this.ping.create();
+        }
+
+        this.setup();
+
+    }
+
+    var sounds = new Soundtrack()
+
+     var synth = new Tone.PolySynth(6, Tone.MonoSynth)
+
+     synth.set({
+        "oscillator" : {
+            "type" : "sine"
+        },
+        "filterEnvelope" : {
+            "attack" : 0.01,
+            "decay" : 0.5,
+            "sustain" : 0.3,
+            "release" : 2,
+        },
+        "envelope" : {
+            "attack" : 0.01,
+            "decay" : 0.01,
+            "sustain" : 0.4,
+            "release" : 3,
+        }
+
+    });
+
+     for (var i=0;i<synth.voices.length;i++) {
+         synth.voices[i].filter.Q.value = 0
+         synth.voices[i].filter.type = "allpass"
+
+    }
+
+     synth.toMaster()
+     //synth.triggerAttackRelease(500,0.3,0,1)
+    
+     var drum = new Tone.Player("kick.wav")
+     drum.toMaster()
+     var drum2 = new Tone.Player("hihat.wav")
+     drum2.toMaster()
+     var drum3 = new Tone.Player("snare.wav")
+     drum3.toMaster()
+
+
+    Tone.Transport.setInterval(function(time){   
+        if (r(6)==1)  {
+            note = Math.floor(Math.random()*8)*50+100;
+            synth.triggerAttackRelease(note, 0.1, time,1); 
+        }       
+        if (r(6)==1)  {
+            drum.start(time)
+        }      
+        if (r(6)==1)  {
+            drum2.start(time)
+        }      
+        if (r(6)==1)  {
+            drum3.start(time)
+        }
+    }, .5);
+
+    //start the transport
+    setTimeout("Tone.Transport.start()",3000)
+  //  sounds.bg.start()
+
+
+    function r(scale) {
+        return Math.floor(Math.random()*scale);
+    }
+
+    </script>
+
+
+
+
+
+
+    </body>
+
+</html>
