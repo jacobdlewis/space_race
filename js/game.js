@@ -10,6 +10,8 @@ var platformX;
 var cursorX;
 var cursorY;
 var maxPlatforms = 2;
+var cameraScrollRate = .05;
+var playerGravity = 350;
 
 function preload () {
   game.load.image( 'platform', '/assets/basic_platform.png');
@@ -26,7 +28,7 @@ function create () {
   startingSpace = game.add.sprite(110, 8850, 'platform');
 
   game.physics.enable(player, Phaser.Physics.ARCADE);
-  player.body.gravity.y = 300;
+  player.body.gravity.y = playerGravity;
   game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
   startingSpace.body.immovable = true;
 
@@ -69,12 +71,29 @@ function update () {
     game.cameraLastY = game.camera.y;
   }
 
-  if (gameStarted ===true) {
-    game.camera.y -= .05;
+  if (gameStarted === true) {
+    game.camera.y -= cameraScrollRate;
   }
 
   cursorX = game.input.x - 50;
   cursorY = (game.world.y * -1) + game.input.y;
+
+  if (player.x < 0) {
+    player.x = 300;
+  }
+  if (player.x > 320) {
+    player.x = 0;
+  }
+  if (player.y < 8000) {
+    playerGravity = 300;
+    cameraScrollRate = .75;
+    player.body.gravity.y = playerGravity;
+  } else if (player.y < 7000) {
+    playerGravity = 275;
+    player.body.gravity.y = playerGravity;
+    cameraScrollRate = 1;
+  }
+
 }
 
 function setPlatform () {
@@ -92,7 +111,6 @@ function setPlatform () {
       platformGroup.children[0].destroy();
     }
   }
-
 
 }
 
