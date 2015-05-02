@@ -57,6 +57,62 @@ function preload () {
   game.load.image( 'holePlatform', '/assets/hole_platform.png');
 }
 
+Player = function(game) {
+  this.cursors = {
+      left:false,
+      right:false,
+      up:false,
+      fire:false
+  };
+
+  this.input = {
+      left:false,
+      right:false,
+      up:false,
+      fire:false
+  };
+
+  this.game = game;
+  this.self = game.add.sprite(130, 8800, 'player');
+  game.physics.enable(this.self, Phaser.Physics.ARCADE);
+  this.self.body.gravity.y = playerGravity;
+};
+
+Player.prototype.update = function() {
+  var inputChanged = (
+    this.cursor.left != this.input.left ||
+    this.cursor.right != this.input.right ||
+    this.cursor.up != this.input.up
+  );
+
+  if (inputChanged) {
+    //Handle input change here
+    //send new values to the server
+    if (this.tank.id == myId) {
+        // send latest valid state to the server
+        this.input.x = this.tank.x;
+        this.input.y = this.tank.y;
+
+        console.log('send to the server');
+    }
+  }
+
+  if (this.cursors.left.isDown || leftButtonDown) {
+    this.self.body.velocity.x = -150
+  } else if (this.cursors.right.isDown || rightButtonDown) {
+    this.self.body.velocity.x = 150;
+  } else {
+    this.self.body.velocity.x = 0;
+  }
+
+  if (cursors.up.isDown && player.body.touching.down) {
+    player.body.velocity.y = -300;
+    gameStarted = true;
+  }
+  console.log("this bitch be updated")
+
+};
+
 function createGame () {
   eurecaServer.playerHandshake();
   game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -78,6 +134,9 @@ function createGame () {
   player.animations.add('left', [0]);
   player.animations.add('right', [1]);
   player.animations.add('front', [2]);
+  player = new Player(game);
+  player = player.self;
+  player.id = myId;
 
   // leftButton = game.add.sprite(10, 410, 'leftButton');
   // leftButton.fixedToCamera = true;
@@ -162,7 +221,6 @@ function update () {
 
     cursorX = game.input.x - 50;
     cursorY = (game.world.y * -1) + game.input.y;
-    console.log(game.camera.y)
 
     if (player.x < 0) {
       player.x = 300;
@@ -221,7 +279,6 @@ function selectHole () {
   currentPlatformType = "hole";
 }
 
-
 function setPlatform(args) {
   console.log("platform set with args")
   console.log(args)
@@ -240,10 +297,6 @@ function setPlatform(args) {
     }
   }
 }
-
-
-
-
 
 /* call functions on all clients using eurecaServer.distribute*/
 
