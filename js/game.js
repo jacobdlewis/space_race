@@ -25,6 +25,9 @@ var eurecaClientSetupGame = function() {
           playerList[id].update();
       }
     }
+    eurecaClient.exports.interact = function(action,args) {
+      window[action](args);
+    }
 }
 
 game.state.add('playgame', { preload: preload, create:eurecaClientSetupGame, update:update });
@@ -58,10 +61,10 @@ function createGame () {
   eurecaServer.playerHandshake();
   game.physics.startSystem(Phaser.Physics.ARCADE);
   game.world.setBounds(0, 0, 320, 9000);
-
   game.background = game.add.tileSprite(0, 0, 320, 9000, 'background');
   game.background.inputEnabled = true;
-  game.background.events.onInputDown.add(setPlatform, this);
+  //game.background.events.onInputDown.add(setPlatform, this);
+  game.background.events.onInputDown.add(sendPlatform,this);
 
   startingSpace = game.add.sprite(110, 8880, 'platform');
   game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
@@ -206,20 +209,42 @@ function selectHole () {
   currentPlatformType = "hole";
 }
 
-function setPlatform () {
+
+function setPlatform(args) {
+  console.log("platform set with args")
+  console.log(args)
   var p = platformGroup.children.length - 1;
   var livingChildren = platformGroup.countLiving();
   if (!platformGroup.children[0]) {
-    platform1 = platformGroup.create(cursorX, cursorY, 'platform');
+    platform1 = platformGroup.create(args.x, args.y, 'platform');
     platform1.enableBody = true;
     platform1.body.immovable = true;
-  } else if (platformGroup.children[p].y - cursorY > 70) {
-    platform1 = platformGroup.create(cursorX, cursorY, 'platform');
+  } else if (platformGroup.children[p].y - args.y > 70) {
+    platform1 = platformGroup.create(args.x, args.y, 'platform');
     platform1.enableBody = true;
     platform1.body.immovable = true;
     if (livingChildren >= maxPlatforms) {
       platformGroup.children[0].destroy();
     }
   }
+}
 
+
+
+
+
+/* call functions on all clients using eurecaServer.distribute*/
+
+function sendPlatform() {
+
+  eurecaServer.distribute("setPlatform", {
+    x: cursorX,
+    y: cursorY
+  })
+
+}
+
+
+function chooseRole(role) {
+  console.log(role)
 }

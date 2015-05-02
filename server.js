@@ -16,7 +16,7 @@ var gameList = {}
 var EurecaServer = require('eureca.io').EurecaServer;
 
 //create an instance of EurecaServer
-var eurecaServer = new EurecaServer({allow:['setId', 'setPlayerType', 'kill', 'updateState']});
+var eurecaServer = new EurecaServer({allow:['setId', 'setPlayerType', 'kill', 'updateState','interact']});
 
 //attach eureca.io to our http server
 eurecaServer.attach(server);
@@ -87,4 +87,13 @@ eurecaServer.exports.handleKeys = function (keys) {
     }
     clients[conn.id].laststate = keys;
 }
+
+
+eurecaServer.exports.distribute = function(action,args) {
+    for (var c in clients){
+        //execute action on client side of all clients
+        clients[c].remote.interact(action,args);
+    }
+}
+
 server.listen(8000);
