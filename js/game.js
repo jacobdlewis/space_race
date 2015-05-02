@@ -1,12 +1,14 @@
 game.state.add('playgame', { preload: preload, create:create, update:update });
 
-
-var platformX;
+var platformGroup;
 var myId=0;
 var eurecaServer;
 var ready = false;
 var nextPlatformTimer = 0;
 var gameStarted = false;
+var platformX;
+var cursorX;
+var cursorY;
 
 function preload () {
   game.load.image( 'platform', '/assets/basic_platform.png');
@@ -18,35 +20,38 @@ function create () {
   game.physics.startSystem(Phaser.Physics.ARCADE);
   game.world.setBounds(0, 0, 320, 9000);
 
-  game.bg = game.add.tileSprite(0, 0, 320, 9000, 'background');
+  game.background = game.add.tileSprite(0, 0, 320, 9000, 'background');
   player = game.add.sprite(130, 8800, 'player');
-  platform = game.add.sprite(110, 8850, 'platform');
-
+  startingSpace = game.add.sprite(110, 8850, 'platform');
 
   game.physics.enable(player, Phaser.Physics.ARCADE);
-  player.body.gravity.y = 200;
-  game.physics.enable(platform, Phaser.Physics.ARCADE);
-  platform.body.immovable = true;
+  player.body.gravity.y = 300;
+  game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
+  startingSpace.body.immovable = true;
 
   cursors = game.input.keyboard.createCursorKeys();
 
-  game.bg.inputEnabled = true;
-  game.bg.events.onInputDown.add(setPlatform, this);
+  game.background.inputEnabled = true;
+  game.background.events.onInputDown.add(setPlatform, this);
 
   game.cameraLastX = game.camera.x;
   game.cameraLastY = game.camera.y;
 
   game.camera.y = 9000;
 
+  platformGroup = game.add.physicsGroup();
+  platformGroup.setAll('enableBody', true);
+  platformGroup.setAll('body.immovable', true);
+
 }
 
 function update () {
 
-  game.physics.arcade.collide(player, platform);
-  game.physics.arcade.collide(player, platformX)
+  game.physics.arcade.collide(player, startingSpace);
+  game.physics.arcade.collide(player, platformGroup);
 
   if (cursors.left.isDown) {
-    player.body.velocity.x = -100;
+    player.body.velocity.x = -100
   } else if (cursors.right.isDown) {
     player.body.velocity.x = 200;
   } else {
@@ -59,7 +64,7 @@ function update () {
   }
 
   if(game.camera.y !== game.cameraLastY) {
-    game.bg.y -= 0.4 * (game.cameraLastY - game.camera.y);
+    game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
     game.cameraLastY = game.camera.y;
   }
 
@@ -67,14 +72,22 @@ function update () {
     game.camera.y -= .05;
   }
 
-
+  cursorX = game.input.x - 50;
+  cursorY = (game.world.y * -1) + game.input.y;
 }
 
 function setPlatform () {
-  var positionY = (game.world.y * -1) + game.input.y;
-  platformX = game.add.sprite(game.input.x - 50, positionY, 'platform');
-  game.physics.enable(platformX, Phaser.Physics.ARCADE);
-  platformX.body.immovable = true;
+  var p = platformGroup.children.length - 1;
+  if (!platformGroup.children[0]) {
+    platform1 = platformGroup.create(cursorX, cursorY, 'platform');
+    platform1.enableBody = true;
+    platform1.body.immovable = true;
+  } else if (platformGroup.children[p].y - cursorY > 70) {
+    platform1 = platformGroup.create(cursorX, cursorY, 'platform');
+    platform1.enableBody = true;
+    platform1.body.immovable = true;
+  }
+
 }
 
 var eurecaClientSetup = function() {
@@ -84,9 +97,6 @@ var eurecaClientSetup = function() {
     eurecaClient.ready(function (proxy) {
         eurecaServer = proxy;
     });
-
-
-    //methods defined under "exports" namespace become available in the server side
 
     eurecaClient.exports.setId = function(id)
     {
