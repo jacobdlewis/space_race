@@ -5,6 +5,7 @@ var platformX;
 var myId=0;
 var eurecaServer;
 var ready = false;
+var nextPlatformTimer = 0;
 
 function preload () {
   game.load.image( 'platform', '/assets/basic_platform.png');
@@ -14,10 +15,11 @@ function preload () {
 
 function create () {
   game.physics.startSystem(Phaser.Physics.ARCADE);
+  game.world.setBounds(0, 0, 320, 9000);
 
   game.bg = game.add.tileSprite(0, 0, 320, 9000, 'background');
-  player = game.add.sprite(250, 300, 'player');
-  platform = game.add.sprite(160, 400, 'platform');
+  player = game.add.sprite(250, 8800, 'player');
+  platform = game.add.sprite(160, 8970, 'platform');
 
 
   game.physics.enable(player, Phaser.Physics.ARCADE);
@@ -33,6 +35,8 @@ function create () {
   game.cameraLastX = game.camera.x;
   game.cameraLastY = game.camera.y;
 
+  game.camera.y = 9000;
+
 }
 
 function update () {
@@ -43,17 +47,13 @@ function update () {
   if (cursors.left.isDown) {
     player.body.velocity.x = -100;
   } else if (cursors.right.isDown) {
-    player.body.velocity.x = 100;
+    player.body.velocity.x = 200;
   } else {
     player.body.velocity.x = 0;
   }
-  if (player.body.y > 601) {
-    player.body.y = 0;
-  }
+
   if (cursors.up.isDown && player.body.touching.down) {
     player.body.velocity.y = -200;
-  } else if (cursors.down.isDown) {
-    player.body.velocity.y = 100;
   }
 
   if(game.camera.y !== game.cameraLastY) {
@@ -61,14 +61,22 @@ function update () {
     game.cameraLastY = game.camera.y;
   }
 
-  game.camera.position.y -= 10;
+  game.camera.y -= .05;
+
+  // if(game.input.onMouseDown() && game.time.now > nextPlatformTimer) {
+  //   setPlatform();
+  //   console.log('click');
+  //   nextPlatformTimer = game.time.now + 600;
+  // }
 
 }
 
 function setPlatform () {
-  platformX = game.add.sprite(game.input.x, game.input.y, 'platform');
+  var positionY = (game.world.y * -1) + game.input.y;
+  platformX = game.add.sprite(game.input.x - 50, positionY, 'platform');
   game.physics.enable(platformX, Phaser.Physics.ARCADE);
   platformX.body.immovable = true;
+  console.log('yes ' + positionY);
 }
 
 var eurecaClientSetup = function() {
