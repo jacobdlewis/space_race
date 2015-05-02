@@ -14,7 +14,7 @@ function create () {
 
   background = game.add.sprite(0, 0, 'background');
   player = game.add.sprite(250, 300, 'player');
-  platform = game.add.sprite(250, 400, 'platform');
+  platform = game.add.sprite(160, 400, 'platform');
 
 
   game.physics.enable(player, Phaser.Physics.ARCADE);
