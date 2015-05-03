@@ -102,8 +102,7 @@ eurecaServer.onDisconnect(function (conn) {
     delete clients[conn.id];
     for (var c in clients){
         var remote = clients[c].remote;
-        //here we call kill() method defined in the client side
-        //remote.kill(conn.id);
+        remote.interact('disconnect',null);
     }
 });
 
