@@ -20,9 +20,6 @@ var eurecaClientSetup = function() {
 
     eurecaClient.exports.chooseRole = function(role) {
       playerRole = role;
-      if (role=="astronaut2" || role=="engineer2" ) {
-        makePlayer2(1000);
-      }
     }
     
     eurecaClient.exports.interact = function(action,args) {
