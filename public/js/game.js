@@ -38,7 +38,11 @@ var eurecaClientSetupGame = function() {
 
 function disconnect(){
   location.reload();
-  alert('client disconnected');
+  console.log('client disconnected');
+}
+
+function removeReadyText(){
+  waitText.destroy();
 }
 
 function sendPlatform() {
@@ -259,11 +263,6 @@ function update () {
       game.physics.arcade.collide(player2, platformGroup);
     }
 
-    if (platformGroup.children.length > 2) {
-      platformGroup.children[0].destroy();
-    }
-
-
     if(game.camera.y !== game.cameraLastY) {
       game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
       game.cameraLastY = game.camera.y;
@@ -303,7 +302,7 @@ function update () {
 function replaceReadyText() {
   readyText.destroy()
   waitText = game.add.text(100, 8650, "Waiting...", {fill: "#fff", fontSize: "25px"})
-  //function sendClientReady() {}
+  eurecaServer.sendReadyState();
 }
 
 // function movePlayerRight () {
