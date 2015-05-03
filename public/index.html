@@ -13,14 +13,15 @@
 
     <body>
     <div id="game-holder"></div>
-    <select onchange="chooseRole()">
+    <select onchange="chooseRole(this.value)">
       <option value="man1">man1</option>
-      <option value="builder">builder1</option>
+      <option value="builder1">builder1</option>
     </select>
 
     <script src="/eureca.js"></script>
     <script src="js/phaser.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/comm.js"></script>
     <script src="js/game.js"></script>
     <script src="js/game_over.js"></script>
     <script src="js/menu.js"></script>

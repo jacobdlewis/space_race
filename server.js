@@ -20,7 +20,7 @@ var gameList = {}
 var EurecaServer = require('eureca.io').EurecaServer;
 
 //create an instance of EurecaServer
-var eurecaServer = new EurecaServer({allow:['setId', 'setPlayerType', 'kill', 'updateState','interact']});
+var eurecaServer = new EurecaServer({allow:['setId', 'setPlayerType', 'kill', 'updateState','interact','chooseRole']});
 
 //attach eureca.io to our http server
 eurecaServer.attach(server);
@@ -34,6 +34,10 @@ eurecaServer.onConnect(function (conn) {
     var remote = eurecaServer.getClient(conn.id);
     //register the client
     clients[conn.id] = {id:conn.id, remote:remote, playerType: nextPlayerType}
+  //  console.log(clients[conn.id].playerType)
+   // console.log(remote.interact)
+   // remote.interact("chooseRole",clients[conn.id].playerType)
+    
     if(gameList[currentGameId] && gameList[currentGameId].players == 2){
         currentGameId++;
         gameList[currentGameId] = {};
@@ -98,6 +102,14 @@ eurecaServer.exports.distribute = function(action,args) {
         //execute action on client side of all clients
         clients[c].remote.interact(action,args);
     }
+}
+
+eurecaServer.exports.getRole = function() {
+    var conn = this.connection;
+    var client = clients[conn.id];
+    client.remote.interact("chooseRole",client.playerType)
+    //console.log(client.playerType)
+    //return client.playerType;
 }
 
 server.listen(process.env.PORT || 8000);
