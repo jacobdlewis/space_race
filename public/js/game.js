@@ -33,12 +33,10 @@ var eurecaClientSetupGame = function() {
 /* call functions on all clients using eurecaServer.distribute*/
 
 function sendPlatform() {
-  if(playerRole == 'engineer1'){
-    eurecaServer.distribute("setPlatform", {
-      x: cursorX,
-      y: cursorY
-    })
-  }
+  eurecaServer.distribute("setPlatform", {
+    x: cursorX,
+    y: cursorY
+  })
 }
 
 
@@ -153,6 +151,7 @@ Platforms = function(game, x, y, type) {
 
 
 function createGame () {
+  // playerRole exists at this time
   eurecaServer.playerHandshake();
   game.physics.startSystem(Phaser.Physics.ARCADE);
   game.world.setBounds(0, 0, 320, 9000);

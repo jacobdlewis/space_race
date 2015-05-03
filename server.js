@@ -78,6 +78,8 @@ eurecaServer.exports.configurePlayer = function() {
     } else if(gameList[currentGameId].players == 3) {
 
         gameList[currentGameId].players++;
+        client.playerType = playerTypes[ptIndex];
+        ptIndex++;
 
     } else {
 
