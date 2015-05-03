@@ -77,6 +77,7 @@ function preload () {
   game.load.spritesheet( 'player1', '/assets/astrousa_v2.png', 32, 64, 9);
   game.load.spritesheet( 'player2', '/assets/astroussr_v2.png', 32, 64, 9);
   game.load.image( 'background', '/assets/space_race_bg_v2.jpg');
+  game.load.image( 'paralax_background', '/assets/space_race_bg_overlay.png');
   game.load.image( 'leftButton', '/assets/control_arrow_left.png');
   game.load.image( 'rightButton', '/assets/control_arrow_right.png');
   game.load.image( 'US_solidPlatform', '/assets/platform_normal_usa.png');
@@ -180,6 +181,7 @@ function createGame () {
   game.world.setBounds(0, 0, 320, 9000);
 
   game.background = game.add.sprite(0, -400, 'background');
+  game.paralax_bg = game.add.sprite(0, -400, 'paralax_background');
 
   game.background.inputEnabled = true;
   if (playerRole === "astronaut1" || playerRole === "astronaut2") {
@@ -281,6 +283,7 @@ function update () {
 
     if(game.camera.y !== game.cameraLastY) {
       game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
+      game.paralax_bg.y -= 0.5 * (game.cameraLastY - game.camera.y);
       game.cameraLastY = game.camera.y;
     }
 
