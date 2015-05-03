@@ -26,7 +26,6 @@ var eurecaClientSetupGame = function() {
       }
     }
     eurecaClient.exports.interact = function(action,args) {
-      console.log(action)
       window[action](args);
     }
 }
