@@ -10,11 +10,11 @@
             create: function() {
                 // first filter
                 this.filter.Q.value = 100
-                this.noise.volume.value = 25;
+                this.noise.volume.value = 16;
                 this.noise.connect(this.filter)
                 this.filter.toMaster();
                 // second filter
-                this.filter2.Q.value = 70
+                this.filter2.Q.value = 100
                 this.noise.connect(this.filter2)
                 this.filter2.toMaster();
 
