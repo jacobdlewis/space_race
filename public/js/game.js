@@ -69,8 +69,8 @@ var currentPlatformType = "US_solidPlatform";
 
 function preload () {
   game.load.image( 'platform', '/assets/platform_start.png');
-  game.load.spritesheet( 'player1', '/assets/astrousa.png', 32, 64, 3);
-  game.load.spritesheet( 'player2', '/assets/astroussr.png', 32, 64, 3);
+  game.load.spritesheet( 'player1', '/assets/astrousa_v2.png', 32, 64, 9);
+  game.load.spritesheet( 'player2', '/assets/astroussr_v2.png', 32, 64, 9);
   game.load.image( 'background', '/assets/space_race_bg_v2.jpg');
   game.load.image( 'leftButton', '/assets/LeftButton.png');
   game.load.image( 'rightButton', '/assets/RightButton.png');
@@ -113,6 +113,8 @@ Player = function(game, id, num) {
   game.physics.enable(this.self, Phaser.Physics.ARCADE);
   this.self.body.gravity.y = playerGravity;
   this.self.id = id;
+  this.self.animations.add('left', [0, 1, 2, 3], 10, true);
+  this.self.animations.add('right', [4, 5, 6, 7], 10, true);
 };
 
 Player.prototype.update = function() {
@@ -183,9 +185,6 @@ function createGame () {
 
   player = new Player(game, myId, 1);
   player = player.self;
-  player.animations.add('left', [0]);
-  player.animations.add('right', [1]);
-  player.animations.add('front', [2]);
 
 
   if (playerRole === "astronaut1" || playerRole === "astronaut2") {
@@ -231,9 +230,6 @@ function createGame () {
   if (playerRole=="astronaut2" || playerRole=="engineer2") {
     player2 = new Player(game, 1000, 2);
     player2 = player2.self;
-    player2.animations.add('left', [0]);
-    player2.animations.add('right', [1]);
-    player2.animations.add('front', [2]);
   }
 
   cursors = game.input.keyboard.createCursorKeys();
