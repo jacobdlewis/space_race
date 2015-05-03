@@ -7,6 +7,7 @@ var eurecaServer;
 var eClient;
 var created = false;
 var playerRole;
+var platform = 0;
 
 var eurecaClientSetupGame = function() {
     eClient = eurecaClient;
@@ -29,16 +30,17 @@ var eurecaClientSetupGame = function() {
     }
 }
 
+
 /* call functions on all clients using eurecaServer.distribute*/
 
-function sendPlatform() {
-  if(playerRole == 'engineer'){
-    eurecaServer.distribute("setPlatform", {
-      x: cursorX,
-      y: cursorY
-    })
-  }
-}
+// function sendPlatform() {
+//   if(playerRole == 'engineer'){
+//     eurecaServer.distribute("setPlatform", {
+//       x: cursorX,
+//       y: cursorY
+//     })
+//   }
+// }
 
 
 function chooseRole(role) {
@@ -136,6 +138,21 @@ Player.prototype.update = function() {
 
 };
 
+Platforms = function(game, x, y, type) {
+  var x = x;
+  var y = y;
+
+  this.game = game;
+  this.self = platformGroup.create(x, y, type);
+  game.physics.enable(this.self, Phaser.Physics.ARCADE);
+  this.self.enableBody = true;
+  this.self.body.immovable = true;
+  this.self.body.setSize(76, 9, 0, 20);
+  this.self.type = type;
+
+};
+
+
 function createGame () {
   eurecaServer.playerHandshake();
   eurecaServer.getRole();
@@ -151,8 +168,6 @@ function createGame () {
   startingSpace = game.add.sprite(110, 8750, 'platform');
   game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
   startingSpace.body.immovable = true;
-
-
 
   player = new Player(game, myId);
   player = player.self;
@@ -213,7 +228,7 @@ function createGame () {
 
 function update () {
     game.physics.arcade.collide(player, startingSpace);
-    game.physics.arcade.collide(player, platformGroup);
+    game.physics.arcade.collide(player, platformGroup, bouncePlayer);
 
     if(game.camera.y !== game.cameraLastY) {
       game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
@@ -254,13 +269,13 @@ function leftButtonUp () {
 }
 
 function selectSolid () {
-  currentPlatformType = "solid";
+  currentPlatformType = "US_solidPlatform";
 }
 function selectIce () {
-  currentPlatformType = "ice";
+  currentPlatformType = "US_icePlatform";
 }
 function selectBounce () {
-  currentPlatformType = "bounce";
+  currentPlatformType = "US_bouncePlatform";
 }
 function selectSpike () {
   currentPlatformType = "spike";
@@ -273,58 +288,19 @@ function selectHole () {
 }
 
 function setPlatform(args) {
-  var p = platformGroup.children.length - 1;
-  var livingChildren = platformGroup.countLiving();
-  if (!platformGroup.children[0]) {
-    switch (currentPlatformType) {
-      case "solid":
-        platform1 = platformGroup.create(args.x, args.y, 'US_solidPlatform');
-        break;
-      case "ice":
-        platform1 = platformGroup.create(args.x, args.y, 'US_icePlatform');
-        break;
-      case "bounce":
-        platform1 = platformGroup.create(args.x, args.y, 'US_bouncePlatform');
-        break;
-      case "spike":
-        platform1 = platformGroup.create(args.x, args.y, 'US_spikePlatform');
-        break;
-      case "slime":
-        platform1 = platformGroup.create(args.x, args.y, 'US_slimePlatform');
-        break;
-      default:
-        platform1 = platformGroup.create(args.x, args.y, 'platform');
-        break;
-    };
-    platform1.enableBody = true;
-    platform1.body.setSize(76, 9, 0, 20);
-    platform1.body.immovable = true;
-  } else if (platformGroup.children[p].y - args.y > 70 || platformGroup.children[p].y - args.y < -70) {
-    switch (currentPlatformType) {
-      case "solid":
-        platform1 = platformGroup.create(args.x, args.y, 'platform');
-        break;
-      case "ice":
-        platform1 = platformGroup.create(args.x, args.y, 'US_icePlatform');
-        break;
-      case "bounce":
-        platform1 = platformGroup.create(args.x, args.y, 'US_bouncePlatform');
-        break;
-      case "spike":
-        platform1 = platformGroup.create(args.x, args.y, 'US_spikePlatform');
-        break;
-      case "slime":
-        platform1 = platformGroup.create(args.x, args.y, 'US_slimePlatform');
-        break;
-      default:
-        platform1 = platformGroup.create(args.x, args.y, 'platform');
-        break;
-    };
-    platform1.enableBody = true;
-    platform1.body.setSize(76, 9, 0, 20);
-    platform1.body.immovable = true;
-    if (livingChildren >= maxPlatforms) {
-      platformGroup.children[0].destroy();
+
+  platform = new Platforms(game, args.x, args.y, currentPlatformType);
+  platform = platform.self;
+
+}
+
+
+function bouncePlayer() {
+  platformGroup.children.forEach(function(child){
+    if (child.body.touching.up && child.type == "US_bouncePlatform") {
+      player.body.velocity.y -= 550;
+    } else if (child.body.touching.up && child.type == "US_icePlatform") {
+      player.body.velocity.x = player.body.velocity.x / 2;
     }
-  }
+  });
 }
