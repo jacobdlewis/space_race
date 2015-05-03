@@ -2,12 +2,11 @@
 /* call functions on all clients using eurecaServer.distribute*/
 
 function sendAllReady() {
-  console.log("sent");
   eurecaServer.distribute("setAllReady",null);
 }
 
 function sendPlatform() {
-
+  //sounds.ping.note();
   eurecaServer.distribute("setPlatform", {
     x: cursorX,
     y: cursorY
@@ -20,10 +19,10 @@ function updateMan1(args) {
     player.y = args.y
     var xVelocity = args.vel
     if(xVelocity < 0){
-      player.frame = 0;
+      player.animations.play('left');
     } else if(xVelocity > 0) {
-      player.frame = 1;
-    } else {player.frame = 2}
+      player.animations.play('right');
+    } else {player.frame = 8}
     if (args.newsound) {
       switch(args.newsound) {
         case "turn":
@@ -45,10 +44,23 @@ function updateMan2(args) {
     player2.y = args.y
     var xVelocity = args.vel
     if(xVelocity < 0){
-      player2.frame = 0;
+      player2.animations.play('left');
     } else if(xVelocity > 0) {
-      player2.frame = 1;
-    } else {player2.frame = 2}
+      player2.animations.play('right');
+    } else {player2.frame = 8}
+    if (args.newsound) {
+      switch(args.newsound) {
+        case "turn":
+            sounds.dude.turn();
+          break;
+        case "jump":
+            sounds.dude.jump();
+          break;
+        case "land":
+            sounds.dude.land();
+          break;
+      }
+    }
   }
 }
 
@@ -136,10 +148,12 @@ function movePlayer1() {
 function movePlayer2() {
   if (cursors.left.isDown || leftButtonDown) {
       sounds.dude.turn()
+      player2.newsound = "turn";
       player2.body.velocity.x = -150
       player2.frame = 0;
     } else if (cursors.right.isDown || rightButtonDown) {
       sounds.dude.turn()
+      player2.newsound = "turn";
       player2.body.velocity.x = 150;
       player2.frame = 1;
     } else {
@@ -149,10 +163,13 @@ function movePlayer2() {
 
     if (player2.body.touching.down && player2.body.touching.down != p2touchdown) {
       sounds.dude.land()
+      player2.newsound = "land";
     }
     p2touchdown = player2.body.touching.down;
 
     if (cursors.up.isDown && player2.body.touching.down) {
+      sounds.dude.jump()
+      player2.newsound = "jump";
       player2.body.velocity.y = -300;
       gameStarted = true;
     }
