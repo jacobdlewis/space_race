@@ -149,15 +149,14 @@ function createGame () {
   game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
   startingSpace.body.immovable = true;
 
-  player = game.add.sprite(130, 8800, 'player');
-  game.physics.enable(player, Phaser.Physics.ARCADE);
-  player.body.gravity.y = playerGravity;
-  player.animations.add('left', [0]);
-  player.animations.add('right', [1]);
-  player.animations.add('front', [2]);
+
+
   player = new Player(game);
   player = player.self;
   player.id = myId;
+  player.animations.add('left', [0]);
+  player.animations.add('right', [1]);
+  player.animations.add('front', [2]);
 
   // leftButton = game.add.sprite(10, 410, 'leftButton');
   // leftButton.fixedToCamera = true;
@@ -226,6 +225,13 @@ function update () {
     cursorX = game.input.x - 50;
     cursorY = (game.world.y * -1) + game.input.y;
 
+ //   if (role=="man1") {
+     // movePlayer1();
+   /*   eurecaServer.distribute("updateMan1",{
+        x: player.x,
+        y: player.y
+      })
+    } */
   }
 
 function movePlayerRight () {
@@ -272,7 +278,7 @@ function setPlatform(args) {
     platform1 = platformGroup.create(args.x, args.y, 'platform');
     platform1.enableBody = true;
     platform1.body.immovable = true;
-  } else if (platformGroup.children[p].y - args.y > 70) {
+  } else if (platformGroup.children[p].y - args.y > 70 || platformGroup.children[p].y - args.y < -70) {
     platform1 = platformGroup.create(args.x, args.y, 'platform');
     platform1.enableBody = true;
     platform1.body.immovable = true;
