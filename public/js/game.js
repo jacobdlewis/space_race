@@ -32,12 +32,12 @@ var eurecaClientSetupGame = function() {
 /* call functions on all clients using eurecaServer.distribute*/
 
 function sendPlatform() {
-
-  eurecaServer.distribute("setPlatform", {
-    x: cursorX,
-    y: cursorY
-  })
-
+  if(playerRole == 'engineer'){
+    eurecaServer.distribute("setPlatform", {
+      x: cursorX,
+      y: cursorY
+    })
+  }
 }
 
 
@@ -231,7 +231,8 @@ function update () {
       movePlayer1();
       eurecaServer.distribute("updateMan1",{
         x: player.x,
-        y: player.y
+        y: player.y,
+        vel: player.body.velocity.x
       })
     }
   }

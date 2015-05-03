@@ -11,7 +11,7 @@
   </head>
 
     <body>
-    <script src="../node_modules/tone/build/tone.js"></script>
+    <script src="js/tone.js"></script>
 
 
     <script>
@@ -52,10 +52,60 @@
                 this.osc.start();
             }
         }
+        this.dude = {
+            create: function() {
+
+                this.synth = new Tone.PolySynth(6, Tone.MonoSynth)
+
+                this.synth.set({
+                    "oscillator" : {
+                        "type" : "sine"
+                    },
+                    "filterEnvelope" : {
+                        "attack" : 0.01,
+                        "decay" : 0.5,
+                        "sustain" : 0.3,
+                        "release" : 2,
+                    },
+                    "envelope" : {
+                        "attack" : 0.01,
+                        "decay" : 0.01,
+                        "sustain" : 0.4,
+                        "release" : 3,
+                    }
+
+                });
+
+                for (var i=0;i<this.synth.voices.length;i++) {
+                    this.synth.voices[i].filter.Q.value = 0
+                    this.synth.voices[i].filter.type = "allpass"
+                }
+
+                this.synth.toMaster()
+                
+                this.drum = new Tone.Player("kick.wav")
+                this.drum.toMaster()
+                this.drum2 = new Tone.Player("hihat.wav")
+                this.drum2.toMaster()
+                this.drum3 = new Tone.Player("jump.wav")
+                this.drum3.toMaster()
+
+            },
+            turn: function() {
+
+            },
+            jump: function() {
+
+            },
+            land: function() {
+
+            },
+        }
 
         this.setup = function() {
             this.bg.create();
             this.ping.create();
+            this.dude.create();
         }
 
         this.setup();
@@ -64,63 +114,26 @@
 
     var sounds = new Soundtrack()
 
-     var synth = new Tone.PolySynth(6, Tone.MonoSynth)
-
-     synth.set({
-        "oscillator" : {
-            "type" : "sine"
-        },
-        "filterEnvelope" : {
-            "attack" : 0.01,
-            "decay" : 0.5,
-            "sustain" : 0.3,
-            "release" : 2,
-        },
-        "envelope" : {
-            "attack" : 0.01,
-            "decay" : 0.01,
-            "sustain" : 0.4,
-            "release" : 3,
-        }
-
-    });
-
-     for (var i=0;i<synth.voices.length;i++) {
-         synth.voices[i].filter.Q.value = 0
-         synth.voices[i].filter.type = "allpass"
-
-    }
-
-     synth.toMaster()
-     //synth.triggerAttackRelease(500,0.3,0,1)
-    
-     var drum = new Tone.Player("kick.wav")
-     drum.toMaster()
-     var drum2 = new Tone.Player("hihat.wav")
-     drum2.toMaster()
-     var drum3 = new Tone.Player("snare.wav")
-     drum3.toMaster()
-
-
+     
     Tone.Transport.setInterval(function(time){   
-        if (r(6)==1)  {
+        if (r(10)==1)  {
             note = Math.floor(Math.random()*8)*50+100;
-            synth.triggerAttackRelease(note, 0.1, time,1); 
+            sounds.dude.synth.triggerAttackRelease(note, 0.1, time,1); 
         }       
-        if (r(6)==1)  {
-            drum.start(time)
+        if (r(10)==1)  {
+            sounds.dude.drum.start(time)
         }      
-        if (r(6)==1)  {
-            drum2.start(time)
+        if (r(10)==1)  {
+            sounds.dude.drum2.start(time)
         }      
-        if (r(6)==1)  {
-            drum3.start(time)
+        if (r(10)==1)  {
+            sounds.dude.drum3.start(time)
         }
-    }, .5);
+    }, .2);
 
     //start the transport
     setTimeout("Tone.Transport.start()",3000)
-  //  sounds.bg.start()
+    sounds.bg.start()
 
 
     function r(scale) {
