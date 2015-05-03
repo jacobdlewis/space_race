@@ -17,7 +17,11 @@ var playerTypes = ['astronaut1','engineer1','astronaut2','engineer2']
 var ptIndex = 0;
 //determines if new game is needed
 var currentGameId = 0;
-var games = {}
+var games = [
+    {
+        readyPlayers: 0
+    }
+]
 //get EurecaServer class
 var EurecaServer = require('eureca.io').EurecaServer;
 
@@ -51,7 +55,15 @@ eurecaServer.exports.configurePlayer = function() {
     currgame = games[0];
     console.log(currgame)
 
-    if (!currgame) {
+    var anyonehere = false
+    for (var key in occupants) {
+        if (occupants[key]!="vacant") {
+            anyonehere = true;
+            break;
+        }
+    }
+
+    if (!currgame || !anyonehere) {
         games[0] = {
             readyPlayers: 0
         }
@@ -135,6 +147,7 @@ eurecaServer.exports.sendReadyState = function(){
 eurecaServer.onDisconnect(function (conn) {
     console.log('Client disconnected ', conn.id);
 
+    //games[0].readyPlayers--;
     occupants[clients[conn.id].playerType] = "vacant";
 
     var removeId = clients[conn.id].id;
