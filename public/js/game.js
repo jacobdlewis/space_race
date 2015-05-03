@@ -284,7 +284,7 @@ function update () {
 
     if(game.camera.y !== game.cameraLastY) {
       game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
-      game.paralax_bg.y -= 0.5 * (game.cameraLastY - game.camera.y);
+      //game.paralax_bg.y -= 0.5 * (game.cameraLastY - game.camera.y);
       game.cameraLastY = game.camera.y;
     }
 
