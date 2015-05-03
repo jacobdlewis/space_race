@@ -177,41 +177,45 @@ function createGame () {
   player.animations.add('right', [1]);
   player.animations.add('front', [2]);
 
-  // leftButton = game.add.sprite(10, 410, 'leftButton');
-  // leftButton.fixedToCamera = true;
-  // leftButton.inputEnabled = true;
-  // leftButton.events.onInputDown.add(movePlayerLeft, this);
-  // leftButton.events.onInputUp.add(leftButtonUp, this);
-  // rightButton = game.add.sprite(260, 410, 'rightButton');
-  // rightButton.fixedToCamera = true;
-  // rightButton.inputEnabled = true;
-  // rightButton.events.onInputDown.add(movePlayerRight, this);
-  // rightButton.events.onInputUp.add(rightButtonUp, this);
+  if (playerRole === "astronaut1" || playerRole === "astronaut2") {
+    leftButton = game.add.sprite(10, 410, 'leftButton');
+    leftButton.fixedToCamera = true;
+    leftButton.inputEnabled = true;
+    leftButton.events.onInputDown.add(movePlayerLeft, this);
+    leftButton.events.onInputUp.add(leftButtonUp, this);
+    rightButton = game.add.sprite(260, 410, 'rightButton');
+    rightButton.fixedToCamera = true;
+    rightButton.inputEnabled = true;
+    rightButton.events.onInputDown.add(movePlayerRight, this);
+    rightButton.events.onInputUp.add(rightButtonUp, this);
+  }
 
-  solidPlatform = game.add.sprite(0, 400, 'solidPlatform');
-  solidPlatform.fixedToCamera = true;
-  solidPlatform.inputEnabled = true;
-  solidPlatform.events.onInputDown.add(selectSolid, this);
-  icePlatform = game.add.sprite(100, 400, 'icePlatform');
-  icePlatform.fixedToCamera = true;
-  icePlatform.inputEnabled = true;
-  icePlatform.events.onInputDown.add(selectIce, this);
-  bouncePlatform = game.add.sprite(200, 400, 'bouncePlatform');
-  bouncePlatform.fixedToCamera = true;
-  bouncePlatform.inputEnabled = true;
-  bouncePlatform.events.onInputDown.add(selectBounce, this);
-  spikePlatform = game.add.sprite(0, 440, 'spikePlatform');
-  spikePlatform.fixedToCamera = true;
-  spikePlatform.inputEnabled = true;
-  spikePlatform.events.onInputDown.add(selectSpike, this);
-  stickyPlatform = game.add.sprite(100, 440, 'stickyPlatform');
-  stickyPlatform.fixedToCamera = true;
-  stickyPlatform.inputEnabled = true;
-  stickyPlatform.events.onInputDown.add(selectSticky, this);
-  holePlatform = game.add.sprite(200, 440, 'holePlatform');
-  holePlatform.fixedToCamera = true;
-  holePlatform.inputEnabled = true;
-  holePlatform.events.onInputDown.add(selectHole, this);
+  if (playerRole === "engineer1" || playerRole === "engineer2") {
+    solidPlatform = game.add.sprite(0, 400, 'solidPlatform');
+    solidPlatform.fixedToCamera = true;
+    solidPlatform.inputEnabled = true;
+    solidPlatform.events.onInputDown.add(selectSolid, this);
+    icePlatform = game.add.sprite(100, 400, 'icePlatform');
+    icePlatform.fixedToCamera = true;
+    icePlatform.inputEnabled = true;
+    icePlatform.events.onInputDown.add(selectIce, this);
+    bouncePlatform = game.add.sprite(200, 400, 'bouncePlatform');
+    bouncePlatform.fixedToCamera = true;
+    bouncePlatform.inputEnabled = true;
+    bouncePlatform.events.onInputDown.add(selectBounce, this);
+    spikePlatform = game.add.sprite(0, 440, 'spikePlatform');
+    spikePlatform.fixedToCamera = true;
+    spikePlatform.inputEnabled = true;
+    spikePlatform.events.onInputDown.add(selectSpike, this);
+    stickyPlatform = game.add.sprite(100, 440, 'stickyPlatform');
+    stickyPlatform.fixedToCamera = true;
+    stickyPlatform.inputEnabled = true;
+    stickyPlatform.events.onInputDown.add(selectSticky, this);
+    holePlatform = game.add.sprite(200, 440, 'holePlatform');
+    holePlatform.fixedToCamera = true;
+    holePlatform.inputEnabled = true;
+    holePlatform.events.onInputDown.add(selectHole, this);
+  }
 
 
   cursors = game.input.keyboard.createCursorKeys();
