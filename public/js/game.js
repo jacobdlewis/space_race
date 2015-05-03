@@ -191,7 +191,7 @@ function createGame () {
     game.background.events.onInputDown.add(sendPlatform,this);
   }
 
-  startingSpace = game.add.sprite(110, 8750, 'platform');
+  startingSpace = game.add.sprite(-5, 8750, 'platform');
   game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
   startingSpace.body.immovable = true;
 
