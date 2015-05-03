@@ -46,7 +46,7 @@ var currentPlatformType = "solid";
 
 function preload () {
   game.load.image( 'platform', '/assets/basic_platform.png');
-  game.load.image( 'player', '/assets/player.png');
+  game.load.spritesheet( 'player', '/assets/astrousa.png', 32, 64, 3);
   game.load.image( 'background', '/assets/space_race_bg_generic_320.jpg');
   game.load.image( 'leftButton', '/assets/LeftButton.png');
   game.load.image( 'rightButton', '/assets/RightButton.png');
@@ -57,6 +57,62 @@ function preload () {
   game.load.image( 'stickyPlatform', '/assets/sticky_platform.png');
   game.load.image( 'holePlatform', '/assets/hole_platform.png');
 }
+
+Player = function(game) {
+  this.cursors = {
+      left:false,
+      right:false,
+      up:false,
+      fire:false
+  };
+
+  this.input = {
+      left:false,
+      right:false,
+      up:false,
+      fire:false
+  };
+
+  this.game = game;
+  this.self = game.add.sprite(130, 8800, 'player');
+  game.physics.enable(this.self, Phaser.Physics.ARCADE);
+  this.self.body.gravity.y = playerGravity;
+};
+
+Player.prototype.update = function() {
+  var inputChanged = (
+    this.cursor.left != this.input.left ||
+    this.cursor.right != this.input.right ||
+    this.cursor.up != this.input.up
+  );
+
+  if (inputChanged) {
+    //Handle input change here
+    //send new values to the server
+    if (this.tank.id == myId) {
+        // send latest valid state to the server
+        this.input.x = this.tank.x;
+        this.input.y = this.tank.y;
+
+        console.log('send to the server');
+    }
+  }
+
+  if (this.cursors.left.isDown || leftButtonDown) {
+    this.self.body.velocity.x = -150
+  } else if (this.cursors.right.isDown || rightButtonDown) {
+    this.self.body.velocity.x = 150;
+  } else {
+    this.self.body.velocity.x = 0;
+  }
+
+  if (cursors.up.isDown && player.body.touching.down) {
+    player.body.velocity.y = -300;
+    gameStarted = true;
+  }
+  console.log("this bitch be updated")
+
+};
 
 function createGame () {
   eurecaServer.playerHandshake();
@@ -82,6 +138,12 @@ function createGame () {
   player = game.add.sprite(130, 8800, 'player');
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.body.gravity.y = playerGravity;
+  player.animations.add('left', [0]);
+  player.animations.add('right', [1]);
+  player.animations.add('front', [2]);
+  player = new Player(game);
+  player = player.self;
+  player.id = myId;
 
   // leftButton = game.add.sprite(10, 410, 'leftButton');
   // leftButton.fixedToCamera = true;
@@ -94,30 +156,30 @@ function createGame () {
   // rightButton.events.onInputDown.add(movePlayerRight, this);
   // rightButton.events.onInputUp.add(rightButtonUp, this);
 
-  solidPlatform = game.add.sprite(0, 400, 'solidPlatform');
-  solidPlatform.fixedToCamera = true;
-  solidPlatform.inputEnabled = true;
-  solidPlatform.events.onInputDown.add(selectSolid, this);
-  icePlatform = game.add.sprite(100, 400, 'icePlatform');
-  icePlatform.fixedToCamera = true;
-  icePlatform.inputEnabled = true;
-  icePlatform.events.onInputDown.add(selectIce, this);
-  bouncePlatform = game.add.sprite(200, 400, 'bouncePlatform');
-  bouncePlatform.fixedToCamera = true;
-  bouncePlatform.inputEnabled = true;
-  bouncePlatform.events.onInputDown.add(selectBounce, this);
-  spikePlatform = game.add.sprite(0, 440, 'spikePlatform');
-  spikePlatform.fixedToCamera = true;
-  spikePlatform.inputEnabled = true;
-  spikePlatform.events.onInputDown.add(selectSpike, this);
-  stickyPlatform = game.add.sprite(100, 440, 'stickyPlatform');
-  stickyPlatform.fixedToCamera = true;
-  stickyPlatform.inputEnabled = true;
-  stickyPlatform.events.onInputDown.add(selectSticky, this);
-  holePlatform = game.add.sprite(200, 440, 'holePlatform');
-  holePlatform.fixedToCamera = true;
-  holePlatform.inputEnabled = true;
-  holePlatform.events.onInputDown.add(selectHole, this);
+  // solidPlatform = game.add.sprite(0, 400, 'solidPlatform');
+  // solidPlatform.fixedToCamera = true;
+  // solidPlatform.inputEnabled = true;
+  // solidPlatform.events.onInputDown.add(selectSolid, this);
+  // icePlatform = game.add.sprite(100, 400, 'icePlatform');
+  // icePlatform.fixedToCamera = true;
+  // icePlatform.inputEnabled = true;
+  // icePlatform.events.onInputDown.add(selectIce, this);
+  // bouncePlatform = game.add.sprite(200, 400, 'bouncePlatform');
+  // bouncePlatform.fixedToCamera = true;
+  // bouncePlatform.inputEnabled = true;
+  // bouncePlatform.events.onInputDown.add(selectBounce, this);
+  // spikePlatform = game.add.sprite(0, 440, 'spikePlatform');
+  // spikePlatform.fixedToCamera = true;
+  // spikePlatform.inputEnabled = true;
+  // spikePlatform.events.onInputDown.add(selectSpike, this);
+  // stickyPlatform = game.add.sprite(100, 440, 'stickyPlatform');
+  // stickyPlatform.fixedToCamera = true;
+  // stickyPlatform.inputEnabled = true;
+  // stickyPlatform.events.onInputDown.add(selectSticky, this);
+  // holePlatform = game.add.sprite(200, 440, 'holePlatform');
+  // holePlatform.fixedToCamera = true;
+  // holePlatform.inputEnabled = true;
+  // holePlatform.events.onInputDown.add(selectHole, this);
 
 
   cursors = game.input.keyboard.createCursorKeys();
@@ -138,8 +200,6 @@ function update () {
     game.physics.arcade.collide(player, startingSpace);
     game.physics.arcade.collide(player, platformGroup);
 
-    
-
     if(game.camera.y !== game.cameraLastY) {
       game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
       game.cameraLastY = game.camera.y;
@@ -153,13 +213,13 @@ function update () {
     cursorY = (game.world.y * -1) + game.input.y;
 
    
-    if (role=="man1") {
+ //   if (role=="man1") {
       movePlayer1();
-      eurecaServer.distribute("updateMan1",{
+   /*   eurecaServer.distribute("updateMan1",{
         x: player.x,
         y: player.y
       })
-    }
+    } */
   }
 
 function movePlayerRight () {
@@ -197,7 +257,6 @@ function selectHole () {
   currentPlatformType = "hole";
 }
 
-
 function setPlatform(args) {
   console.log("platform set with args")
   console.log(args)
@@ -217,3 +276,18 @@ function setPlatform(args) {
   }
 }
 
+/* call functions on all clients using eurecaServer.distribute*/
+
+function sendPlatform() {
+
+  eurecaServer.distribute("setPlatform", {
+    x: cursorX,
+    y: cursorY
+  })
+
+}
+
+
+function chooseRole(role) {
+  console.log(role)
+}
