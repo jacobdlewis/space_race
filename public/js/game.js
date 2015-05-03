@@ -8,10 +8,10 @@ var eClient;
 var created = false;
 var playerRole;
 var player2 = false;
+var platform = 0;
 
 var eurecaClientSetupGame = function() {
     eClient = eurecaClient;
-    console.log("client",eClient);
     if(!created){
       createGame();
     }
@@ -28,6 +28,7 @@ var eurecaClientSetupGame = function() {
     }
 }
 
+
 /* call functions on all clients using eurecaServer.distribute*/
 
 function sendPlatform() {
@@ -40,7 +41,9 @@ function sendPlatform() {
 }
 
 
-/////////////////////////////////////////////////////////////////
+function chooseRole(role) {
+  playerRole = role;
+}
 
 game.state.add('playgame', { preload: preload, create:eurecaClientSetupGame, update:update });
 var platformX;
@@ -56,11 +59,21 @@ var rightButtonDown = false;
 var currentPlatformType = "solid";
 
 function preload () {
-  game.load.image( 'platform', '/assets/basic_platform.png');
+  game.load.image( 'platform', '/assets/platform_start.png');
   game.load.spritesheet( 'player', '/assets/astrousa.png', 32, 64, 3);
-  game.load.image( 'background', '/assets/space_race_bg_generic_320.jpg');
+  game.load.image( 'background', '/assets/space_race_bg_v2.jpg');
   game.load.image( 'leftButton', '/assets/LeftButton.png');
   game.load.image( 'rightButton', '/assets/RightButton.png');
+  game.load.image( 'US_solidPlatform', '/assets/platform_normal_usa.png');
+  game.load.image( 'USSR_solidPlatform', '/assets/platform_normal_ussr.png');
+  game.load.image( 'US_icePlatform', '/assets/platform_snow_usa.png');
+  game.load.image( 'USSR_icePlatform', '/assets/platform_snow_ussr.png');
+  game.load.image( 'US_bouncePlatform', '/assets/platform_bounce_usa.png');
+  game.load.image( 'USSR_bouncePlatform', '/assets/platform_bounce_ussr.png');
+  game.load.image( 'US_spikePlatform', '/assets/platform_spike_usa.png');
+  game.load.image( 'USSR_spikePlatform', '/assets/platform_spike_ussr.png');
+  game.load.image( 'US_slimePlatform', '/assets/platform_slime_usa.png');
+  game.load.image( 'USSR_slimePlatform', '/assets/platform_slime_ussr.png');
   game.load.image( 'solidPlatform', '/assets/solid_platform.png');
   game.load.image( 'icePlatform', '/assets/ice_platform.png');
   game.load.image( 'bouncePlatform', '/assets/bounce_platform.png');
@@ -85,7 +98,7 @@ Player = function(game, id) {
   };
 
   this.game = game;
-  this.self = game.add.sprite(130, 8800, 'player');
+  this.self = game.add.sprite(130, 8650, 'player');
   game.physics.enable(this.self, Phaser.Physics.ARCADE);
   this.self.body.gravity.y = playerGravity;
   this.self.id = id;
@@ -101,12 +114,10 @@ Player.prototype.update = function() {
   if (inputChanged) {
     //Handle input change here
     //send new values to the server
-    if (this.tank.id == myId) {
+    if (this.player.id == myId) {
         // send latest valid state to the server
-        this.input.x = this.tank.x;
-        this.input.y = this.tank.y;
-
-        console.log('send to the server');
+        this.input.x = this.player.x;
+        this.input.y = this.player.y;
     }
   }
 
@@ -122,9 +133,23 @@ Player.prototype.update = function() {
     player.body.velocity.y = -300;
     gameStarted = true;
   }
-  console.log("this bitch be updated")
 
 };
+
+Platforms = function(game, x, y, type) {
+  var x = x;
+  var y = y;
+
+  this.game = game;
+  this.self = platformGroup.create(x, y, type);
+  game.physics.enable(this.self, Phaser.Physics.ARCADE);
+  this.self.enableBody = true;
+  this.self.body.immovable = true;
+  this.self.body.setSize(76, 9, 0, 20);
+  this.self.type = type;
+
+};
+
 
 function createGame () {
   eurecaServer.playerHandshake();
@@ -137,11 +162,9 @@ function createGame () {
   //game.background.events.onInputDown.add(setPlatform, this);
   game.background.events.onInputDown.add(sendPlatform,this);
 
-  startingSpace = game.add.sprite(110, 8880, 'platform');
+  startingSpace = game.add.sprite(110, 8750, 'platform');
   game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
   startingSpace.body.immovable = true;
-
-
 
   player = new Player(game, myId);
   player = player.self;
@@ -161,30 +184,30 @@ function createGame () {
   // rightButton.events.onInputDown.add(movePlayerRight, this);
   // rightButton.events.onInputUp.add(rightButtonUp, this);
 
-  // solidPlatform = game.add.sprite(0, 400, 'solidPlatform');
-  // solidPlatform.fixedToCamera = true;
-  // solidPlatform.inputEnabled = true;
-  // solidPlatform.events.onInputDown.add(selectSolid, this);
-  // icePlatform = game.add.sprite(100, 400, 'icePlatform');
-  // icePlatform.fixedToCamera = true;
-  // icePlatform.inputEnabled = true;
-  // icePlatform.events.onInputDown.add(selectIce, this);
-  // bouncePlatform = game.add.sprite(200, 400, 'bouncePlatform');
-  // bouncePlatform.fixedToCamera = true;
-  // bouncePlatform.inputEnabled = true;
-  // bouncePlatform.events.onInputDown.add(selectBounce, this);
-  // spikePlatform = game.add.sprite(0, 440, 'spikePlatform');
-  // spikePlatform.fixedToCamera = true;
-  // spikePlatform.inputEnabled = true;
-  // spikePlatform.events.onInputDown.add(selectSpike, this);
-  // stickyPlatform = game.add.sprite(100, 440, 'stickyPlatform');
-  // stickyPlatform.fixedToCamera = true;
-  // stickyPlatform.inputEnabled = true;
-  // stickyPlatform.events.onInputDown.add(selectSticky, this);
-  // holePlatform = game.add.sprite(200, 440, 'holePlatform');
-  // holePlatform.fixedToCamera = true;
-  // holePlatform.inputEnabled = true;
-  // holePlatform.events.onInputDown.add(selectHole, this);
+  solidPlatform = game.add.sprite(0, 400, 'solidPlatform');
+  solidPlatform.fixedToCamera = true;
+  solidPlatform.inputEnabled = true;
+  solidPlatform.events.onInputDown.add(selectSolid, this);
+  icePlatform = game.add.sprite(100, 400, 'icePlatform');
+  icePlatform.fixedToCamera = true;
+  icePlatform.inputEnabled = true;
+  icePlatform.events.onInputDown.add(selectIce, this);
+  bouncePlatform = game.add.sprite(200, 400, 'bouncePlatform');
+  bouncePlatform.fixedToCamera = true;
+  bouncePlatform.inputEnabled = true;
+  bouncePlatform.events.onInputDown.add(selectBounce, this);
+  spikePlatform = game.add.sprite(0, 440, 'spikePlatform');
+  spikePlatform.fixedToCamera = true;
+  spikePlatform.inputEnabled = true;
+  spikePlatform.events.onInputDown.add(selectSpike, this);
+  stickyPlatform = game.add.sprite(100, 440, 'stickyPlatform');
+  stickyPlatform.fixedToCamera = true;
+  stickyPlatform.inputEnabled = true;
+  stickyPlatform.events.onInputDown.add(selectSticky, this);
+  holePlatform = game.add.sprite(200, 440, 'holePlatform');
+  holePlatform.fixedToCamera = true;
+  holePlatform.inputEnabled = true;
+  holePlatform.events.onInputDown.add(selectHole, this);
 
 
   cursors = game.input.keyboard.createCursorKeys();
@@ -255,45 +278,30 @@ function leftButtonUp () {
 }
 
 function selectSolid () {
-  currentPlatformType = "solid";
+  currentPlatformType = "US_solidPlatform";
 }
 function selectIce () {
-  currentPlatformType = "ice";
+  currentPlatformType = "US_icePlatform";
 }
 function selectBounce () {
-  currentPlatformType = "bounce";
+  currentPlatformType = "US_bouncePlatform";
 }
 function selectSpike () {
   currentPlatformType = "spike";
 }
 function selectSticky () {
-  currentPlatformType = "sticky";
+  currentPlatformType = "slime";
 }
 function selectHole () {
   currentPlatformType = "hole";
 }
 
 function setPlatform(args) {
-  console.log("platform set with args")
-  console.log(args)
-  var p = platformGroup.children.length - 1;
-  var livingChildren = platformGroup.countLiving();
-  if (!platformGroup.children[0]) {
-    platform1 = platformGroup.create(args.x, args.y, 'platform');
-    platform1.enableBody = true;
-    platform1.body.immovable = true;
-  } else if (platformGroup.children[p].y - args.y > 70 || platformGroup.children[p].y - args.y < -70) {
-    platform1 = platformGroup.create(args.x, args.y, 'platform');
-    platform1.enableBody = true;
-    platform1.body.immovable = true;
-    if (livingChildren >= maxPlatforms) {
-      platformGroup.children[0].destroy();
-    }
-  }
+
+  platform = new Platforms(game, args.x, args.y, currentPlatformType);
+  platform = platform.self;
+
 }
-
-
-
 
 
 function createPlayer2(id) {
@@ -306,3 +314,12 @@ function createPlayer2(id) {
 
 }
 
+function bouncePlayer() {
+  platformGroup.children.forEach(function(child){
+    if (child.body.touching.up && child.type == "US_bouncePlatform") {
+      player.body.velocity.y -= 550;
+    } else if (child.body.touching.up && child.type == "US_icePlatform") {
+      player.body.velocity.x = player.body.velocity.x / 2;
+    }
+  });
+}

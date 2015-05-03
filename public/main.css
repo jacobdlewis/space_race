@@ -2,3 +2,8 @@ body {
   margin: 0;
   padding: 0;
 }
+
+canvas {
+	margin:40px auto;
+	display:block;
+}
