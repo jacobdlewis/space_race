@@ -422,9 +422,9 @@ function checkPlatformPlacement() {
 function createPlayer2(id) {
   player2 = new Player(game, id);
   player2 = player2.self;
-  player2.animations.add('left', [0]);
-  player2.animations.add('right', [1]);
-  player2.animations.add('front', [2]);
+ // player2.animations.add('left', [0]);
+ // player2.animations.add('right', [1]);
+ // player2.animations.add('front', [2]);
 }
 
 function platformEffect() {
