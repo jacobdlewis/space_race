@@ -102,7 +102,7 @@ function preload () {
   //game.load.image( 'holePlatform', '/assets/hole_platform.png');
 }
 
-Player = function(game, id, num) {
+Player = function(game, id, num, x, y) {
   this.num = num
   this.cursors = {
       left:false,
@@ -119,7 +119,7 @@ Player = function(game, id, num) {
   };
 
   this.game = game;
-  this.self = game.add.sprite(90+num*5, 8650, 'player'+num);
+  this.self = game.add.sprite(x, y, 'player'+num);
   game.physics.enable(this.self, Phaser.Physics.ARCADE);
   this.self.body.gravity.y = playerGravity;
   this.self.id = id;
@@ -195,7 +195,7 @@ function createGame () {
   game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
   startingSpace.body.immovable = true;
 
-  player = new Player(game, myId, 1);
+  player = new Player(game, myId, 1, 90, 8650);
   player = player.self;
 
 
@@ -247,7 +247,7 @@ function createGame () {
 
 
   if (playerRole=="astronaut2" || playerRole=="engineer2") {
-    player2 = new Player(game, 1000, 2);
+    player2 = new Player(game, 1000, 2, 220, 8650);
     player2 = player2.self;
     ussr_badge = game.add.sprite(255, 1, 'USSR_badge');
     ussr_badge.fixedToCamera = true;
@@ -277,6 +277,7 @@ function createGame () {
 function update () {
     game.physics.arcade.collide(player, startingSpace);
     game.physics.arcade.collide(player, platformGroup, platformEffect);
+    game.physics.arcade.collide(player2, platformGroup, ussrPlatFormEffect);
     if (player2) {
       game.physics.arcade.collide(player2, startingSpace);
       game.physics.arcade.collide(player2, platformGroup);
@@ -347,27 +348,47 @@ function replaceReadyText() {
 
 function selectSolid () {
   lastPlatformType = currentPlatformType;
-  currentPlatformType = "US_solidPlatform";
+  if(playerRole === "engineer1") {
+    currentPlatformType = "US_solidPlatform";
+  } else {
+    currentPlatformType = "USSR_solidPlatform"
+  }
   solidPlatform.frame = 1;
 }
 function selectIce () {
   lastPlatformType = currentPlatformType;
-  currentPlatformType = "US_icePlatform";
+  if(playerRole === "engineer1") {
+    currentPlatformType = "US_icePlatform";
+  } else {
+    currentPlatformType = "USSR_icePlatform"
+  }
   icePlatform.frame = 1;
 }
 function selectBounce () {
   lastPlatformType = currentPlatformType;
-  currentPlatformType = "US_bouncePlatform";
+  if(playerRole === "engineer1") {
+    currentPlatformType = "US_bouncePlatform";
+  } else {
+    currentPlatformType = "USSR_bouncePlatform"
+  }
   bouncePlatform.frame = 1;
 }
 function selectSpike () {
   lastPlatformType = currentPlatformType;
-  currentPlatformType = "US_spikePlatform";
+  if(playerRole === "engineer1") {
+    currentPlatformType = "US_spikePlatform";
+  } else {
+    currentPlatformType = "USSR_spikePlatform"
+  }
   spikePlatform.frame = 1;
 }
 function selectSticky () {
   lastPlatformType = currentPlatformType;
-  currentPlatformType = "US_slimePlatform";
+  if(playerRole === "engineer1") {
+    currentPlatformType = "US_slimePlatform";
+  } else {
+    currentPlatformType = "USSR_slimePlatform"
+  }
   stickyPlatform.frame = 1;
 }
 function selectHole () {
@@ -410,16 +431,52 @@ function platformEffect() {
   platformGroup.children.forEach(function(child){
     if (child.body.touching.up && child.type == "US_bouncePlatform") {
       player.body.velocity.y -= 400;
+      player2.body.velocity.y -= 400;
     } else if (child.body.touching.up && child.type == "US_slimePlatform") {
       player.body.velocity.x = 0;
       player.body.velocity.y += 5;
+      player2.body.velocity.x = 0;
+      player2.body.velocity.y += 5;
     } else if (child.body.touching.up && child.type == "US_icePlatform") {
       if (player.body.velocity.x > 0) {
         player.body.velocity.x -= 135;
+        player2.body.velocity.x -= 135;
       } else if (player.body.velocity.x < 0) {
         player.body.velocity.x += 135;
+        player2.body.velocity.x += 135;
       }
     } else if (child.body.touching.up && child.type == "US_spikePlatform") {
+      player.body.velocity.y = -250;
+      if (playerHealth === 2) {
+        health2.destroy();
+      }
+      if (playerHealth ===1) {
+        health1.destroy();
+      }
+      playerHealth -= 1;
+    }
+  });
+}
+
+function ussrPlatFormEffect() {
+  platformGroup.children.forEach(function(child){
+    if (child.body.touching.up && child.type == "USSR_bouncePlatform") {
+      player.body.velocity.y -= 400;
+      player2.body.velocity.y -= 400;
+    } else if (child.body.touching.up && child.type == "USSR_slimePlatform") {
+      player.body.velocity.x = 0;
+      player.body.velocity.y += 5;
+      player2.body.velocity.x = 0;
+      player2.body.velocity.y += 5;
+    } else if (child.body.touching.up && child.type == "USSR_icePlatform") {
+      if (player.body.velocity.x > 0) {
+        player.body.velocity.x -= 135;
+        player2.body.velocity.x -= 135;
+      } else if (player.body.velocity.x < 0) {
+        player.body.velocity.x += 135;
+        player2.body.velocity.x += 135;
+      }
+    } else if (child.body.touching.up && child.type == "USSR_spikePlatform") {
       player.body.velocity.y = -250;
       if (playerHealth === 2) {
         health2.destroy();
