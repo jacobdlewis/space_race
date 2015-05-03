@@ -1,6 +1,7 @@
 
 var platformGroup;
 var ready = false;
+var allReady = false;
 var gameStarted = false;
 var eurecaServer;
 var eClient;
@@ -35,12 +36,19 @@ var eurecaClientSetupGame = function() {
 
 /* call functions on all clients using eurecaServer.distribute*/
 
+function disconnect(){
+  location.reload();
+  alert('client disconnected');
+}
+
 function sendPlatform() {
-  eurecaServer.distribute("setPlatform", {
-    x: cursorX,
-    y: cursorY,
-    type: currentPlatformType
-  })
+  if(allReady){
+    eurecaServer.distribute("setPlatform", {
+      x: cursorX,
+      y: cursorY,
+      type: currentPlatformType
+    })
+  }
 }
 
 
@@ -165,9 +173,8 @@ function createGame () {
   game.background = game.add.sprite(0, -400, 'background');
 
   game.background.inputEnabled = true;
-  //game.background.events.onInputDown.add(setPlatform, this);
   if (playerRole === "astronaut1" || playerRole === "astronaut2") {
-    game.background.events.onInputDown.add(jumpPlayer,this);
+    //game.background.events.onInputDown.add(jumpPlayer,this);
   } else if (playerRole === "engineer1" || playerRole === "engineer2") {
     game.background.events.onInputDown.add(sendPlatform,this);
   }
@@ -187,13 +194,13 @@ function createGame () {
     leftButton = game.add.sprite(10, 410, 'leftButton');
     leftButton.fixedToCamera = true;
     leftButton.inputEnabled = true;
-    leftButton.events.onInputDown.add(movePlayerLeft, this);
-    leftButton.events.onInputUp.add(leftButtonUp, this);
+    // leftButton.events.onInputDown.add(movePlayerLeft, this);
+    // leftButton.events.onInputUp.add(leftButtonUp, this);
     rightButton = game.add.sprite(260, 410, 'rightButton');
     rightButton.fixedToCamera = true;
     rightButton.inputEnabled = true;
-    rightButton.events.onInputDown.add(movePlayerRight, this);
-    rightButton.events.onInputUp.add(rightButtonUp, this);
+    // rightButton.events.onInputDown.add(movePlayerRight, this);
+    // rightButton.events.onInputUp.add(rightButtonUp, this);
   }
 
   if (playerRole === "engineer1" || playerRole === "engineer2") {
@@ -266,7 +273,7 @@ function update () {
       game.cameraLastY = game.camera.y;
     }
 
-    if (gameStarted === true) {
+    if (gameStarted === true && allReady) {
       game.camera.y -= cameraScrollRate;
     }
 
@@ -277,7 +284,7 @@ function update () {
     cursorX = game.input.x - 50;
     cursorY = (game.world.y * -1) + game.input.y;
 
-    if (playerRole=="astronaut1") {
+    if (playerRole=="astronaut1" && allReady) {
       movePlayer1();
       eurecaServer.distribute("updateMan1",{
         x: player.x,
@@ -286,7 +293,7 @@ function update () {
         newsound: player.newsound
       })
     }
-    if (playerRole=="astronaut2") {
+    if (playerRole=="astronaut2" && allReady) {
       movePlayer2();
       eurecaServer.distribute("updateMan2",{
         x: player2.x,
@@ -303,25 +310,26 @@ function replaceReadyText() {
   //function sendClientReady() {}
 }
 
-function movePlayerRight () {
-  rightButtonDown = true;
-  player.body.velocity.x = 150;
-}
-function rightButtonUp () {
-  rightButtonDown = false;
-}
-function jumpPlayer () {
-  if (player.body.touching.down) {
-    player.body.velocity.y = -300;
-  }
-}
-function movePlayerLeft () {
-  leftButtonDown = true;
-  player.body.velocity.x = -150;
-}
-function leftButtonUp () {
-  leftButtonDown = false;
-}
+// function movePlayerRight () {
+//   rightButtonDown = true;
+//   player.body.velocity.x = 150;
+// }
+// function rightButtonUp () {
+//   rightButtonDown = false;
+// }
+// function jumpPlayer () {
+//   if (player.body.touching.down) {
+//     player.body.velocity.y = -300;
+//   }
+// }
+// function movePlayerLeft () {
+//   leftButtonDown = true;
+//   player.body.velocity.x = -150;
+// }
+// function leftButtonUp () {
+//   leftButtonDown = false;
+// }
+
 function selectSolid () {
   lastPlatformType = currentPlatformType;
   currentPlatformType = "US_solidPlatform";
@@ -357,6 +365,7 @@ function setPlatform(args) {
     platform = new Platforms(game, args.x, args.y, args.type);
     platform = platform.self;
     nextPlatformTick = game.time.now + 1500;
+    sounds.ping.note();
   }
 }
 
