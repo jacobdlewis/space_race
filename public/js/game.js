@@ -85,6 +85,9 @@ function preload () {
   game.load.image( 'USSR_spikePlatform', '/assets/platform_spike_ussr.png');
   game.load.image( 'US_slimePlatform', '/assets/platform_slime_usa.png');
   game.load.image( 'USSR_slimePlatform', '/assets/platform_slime_ussr.png');
+  game.load.image( 'US_badge', '/assets/badge_usa.png');
+  game.load.image( 'USSR_badge', '/assets/badge_ussr.png');
+  game.load.image( 'heart', '/assets/heart.png');
 
   game.load.spritesheet( 'solidPlatform', '/assets/button_platform_normal.png', 64, 64, 2);
   game.load.spritesheet( 'icePlatform', '/assets/button_platform_snow.png', 64, 64, 2);
@@ -200,6 +203,10 @@ function createGame () {
     rightButton.inputEnabled = true;
     // rightButton.events.onInputDown.add(movePlayerRight, this);
     // rightButton.events.onInputUp.add(rightButtonUp, this);
+    health1 = game.add.sprite(10, 10, 'heart');
+    health2 = game.add.sprite(50, 10, 'heart');
+    health1.fixedToCamera = true;
+    health2.fixedToCamera = true;
   }
 
   if (playerRole === "engineer1" || playerRole === "engineer2") {
@@ -230,9 +237,18 @@ function createGame () {
     // holePlatform.events.onInputDown.add(selectHole, this);
   }
 
+
+
   if (playerRole=="astronaut2" || playerRole=="engineer2") {
     player2 = new Player(game, 1000, 2);
     player2 = player2.self;
+    ussr_badge = game.add.sprite(255, 1, 'USSR_badge');
+    ussr_badge.fixedToCamera = true;
+  }
+
+  if (playerRole === "astronaut1" || playerRole === "engineer1") {
+    us_badge = game.add.sprite(255, 1, 'US_badge');
+    us_badge.fixedToCamera = true;
   }
 
   cursors = game.input.keyboard.createCursorKeys();
@@ -406,6 +422,12 @@ function platformEffect() {
       }
     } else if (child.body.touching.up && child.type == "US_spikePlatform") {
       player.body.velocity.y = -250;
+      if (playerHealth === 2) {
+        health2.destroy();
+      }
+      if (playerHealth ===1) {
+        health1.destroy();
+      }
       playerHealth -= 1;
     }
   });
