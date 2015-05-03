@@ -137,8 +137,12 @@ function movePlayer1() {
     }
 
     if (player.y > game.camera.y + 480 || playerHealth <= 0) {
+      var gameOverTime = game.time.now + 3000;
       gameOverText = game.add.text(game.camera.x + 70, game.camera.y + 160, "GAME OVER", { fontSize: '32px', fill: 'white' });
       cameraScrollRate = 0;
+      if (game.time.now > gameOverTime) {
+        game.state.start('gameOver');
+      }
     }
 
 }

@@ -379,10 +379,6 @@ function checkPlatformPlacement() {
   }
 }
 
-function platformPlacementForEach() {
-
-}
-
 function createPlayer2(id) {
   player2 = new Player(game, id);
   player2 = player2.self;
