@@ -78,9 +78,9 @@ function movePlayer1() {
   if (cursors.left.isDown || leftButtonDown) {
       if (!player.turningLeft) {
         sounds.dude.turn()
-        player.newsound = "turn";  
+        player.newsound = "turn";
         player.turningLeft = true;
-        player.turningRight = false; 
+        player.turningRight = false;
       }
       player.body.velocity.x = -150
       player.animations.play("left");
@@ -88,8 +88,8 @@ function movePlayer1() {
       if (!player.turningRight) {
         sounds.dude.turn()
         player.newsound = "turn";
-        player.turningRight = true;  
-        player.turningLeft = false;  
+        player.turningRight = true;
+        player.turningLeft = false;
       }
       sounds.dude.turn()
       player.newsound = "turn";
@@ -164,8 +164,8 @@ function movePlayer2() {
       if (!player2.turningLeft) {
         sounds.dude.turn()
         player2.newsound = "turn";
-        player2.turningLeft = true; 
-        player2.turningRight = false;  
+        player2.turningLeft = true;
+        player2.turningRight = false;
       }
       player2.body.velocity.x = -150
       player2.animations.play('left')
@@ -173,14 +173,21 @@ function movePlayer2() {
       if (!player2.turningRight) {
         sounds.dude.turn()
         player2.newsound = "turn";
-        player2.turningRight = true; 
-        player2.turningLeft = false;  
+        player2.turningRight = true;
+        player2.turningLeft = false;
       }
       player2.body.velocity.x = 150;
       player2.animations.play('right')
     } else {
-      player2.body.velocity.x = 0;
-      player2.frame = 8;
+      if (player2.body.velocity.x > 0) {
+        player2.body.velocity.x -= 5;
+        player2.animations.play('left');
+      } else if (player2.body.velocity.x < 0) {
+        player2.body.velocity.x += 5;
+        player2.animations.play('right');
+      } else if (player2.body.velocity.x === 0) {
+        player2.frame = 8;
+      }
     }
 
     if (player2.body.touching.down && player2.body.touching.down != p2touchdown) {
