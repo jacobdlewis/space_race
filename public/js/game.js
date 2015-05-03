@@ -78,11 +78,11 @@ function preload () {
   game.load.image( 'US_slimePlatform', '/assets/platform_slime_usa.png');
   game.load.image( 'USSR_slimePlatform', '/assets/platform_slime_ussr.png');
 
-  game.load.spritesheet( 'solidPlatform', '/assets/button_platform_normal.png', 32, 32, 2);
-  game.load.spritesheet( 'icePlatform', '/assets/button_platform_snow.png', 32, 32, 2);
-  game.load.spritesheet( 'bouncePlatform', '/assets/button_platform_bounce.png', 32, 32, 2);
-  game.load.spritesheet( 'spikePlatform', '/assets/button_platform_spike.png', 32, 32, 2);
-  game.load.spritesheet( 'stickyPlatform', '/assets/button_platform_slime.png', 32, 32, 2);
+  game.load.spritesheet( 'solidPlatform', '/assets/button_platform_normal.png', 64, 64, 2);
+  game.load.spritesheet( 'icePlatform', '/assets/button_platform_snow.png', 64, 64, 2);
+  game.load.spritesheet( 'bouncePlatform', '/assets/button_platform_bounce.png', 64, 64, 2);
+  game.load.spritesheet( 'spikePlatform', '/assets/button_platform_spike.png', 64, 64, 2);
+  game.load.spritesheet( 'stickyPlatform', '/assets/button_platform_slime.png', 64, 64, 2);
   //game.load.image( 'holePlatform', '/assets/hole_platform.png');
 }
 
@@ -197,19 +197,20 @@ function createGame () {
   }
 
   if (playerRole === "engineer1" || playerRole === "engineer2") {
-    solidPlatform = game.add.sprite(50, 400, 'solidPlatform');
+    solidPlatform = game.add.sprite(10, 400, 'solidPlatform');
     solidPlatform.fixedToCamera = true;
     solidPlatform.inputEnabled = true;
+    solidPlatform.frame = 1;
     solidPlatform.events.onInputDown.add(selectSolid, this);
-    icePlatform = game.add.sprite(100, 400, 'icePlatform');
+    icePlatform = game.add.sprite(70, 400, 'icePlatform');
     icePlatform.fixedToCamera = true;
     icePlatform.inputEnabled = true;
     icePlatform.events.onInputDown.add(selectIce, this);
-    bouncePlatform = game.add.sprite(150, 400, 'bouncePlatform');
+    bouncePlatform = game.add.sprite(130, 400, 'bouncePlatform');
     bouncePlatform.fixedToCamera = true;
     bouncePlatform.inputEnabled = true;
     bouncePlatform.events.onInputDown.add(selectBounce, this);
-    spikePlatform = game.add.sprite(200, 400, 'spikePlatform');
+    spikePlatform = game.add.sprite(190, 400, 'spikePlatform');
     spikePlatform.fixedToCamera = true;
     spikePlatform.inputEnabled = true;
     spikePlatform.events.onInputDown.add(selectSpike, this);
@@ -339,12 +340,12 @@ function selectBounce () {
 function selectSpike () {
   lastPlatformType = currentPlatformType;
   currentPlatformType = "US_spikePlatform";
-  spikePlatform = spikePlatform.frame = 1;
+  spikePlatform.frame = 1;
 }
 function selectSticky () {
   lastPlatformType = currentPlatformType;
   currentPlatformType = "US_slimePlatform";
-  stickyPlatform = stickyPlatform.frame = 1;
+  stickyPlatform.frame = 1;
 }
 function selectHole () {
   lastPlatformType = currentPlatformType;
