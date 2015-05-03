@@ -350,6 +350,7 @@ function setPlatform(args) {
     platform = new Platforms(game, args.x, args.y, args.type);
     platform = platform.self;
     nextPlatformTick = game.time.now + 1500;
+    sounds.ping.note();
   }
 }
 
