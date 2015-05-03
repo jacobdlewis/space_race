@@ -51,7 +51,7 @@ eurecaServer.exports.configurePlayer = function() {
 
     if (!gameList[currentGameId]) {
 
-        gameList[currentGameId]={}
+        gameList[currentGameId]={readyPlayers: 0};
         gameList[currentGameId].players = 1;
         client.playerType = playerTypes[ptIndex];
 
@@ -95,6 +95,39 @@ eurecaServer.exports.configurePlayer = function() {
     client.configured = true;
 }
 
+eurecaServer.exports.distribute = function(action,args) {
+    for (var c in clients){
+        //execute action on client side of all clients
+        if (clients[c].configured) {
+            clients[c].remote.interact(action,args);
+        }
+    }
+}
+
+eurecaServer.exports.getRole = function() {
+    var conn = this.connection;
+    var client = clients[conn.id];
+    console.log(client.playerType)
+    client.remote.interact("chooseRole",client.playerType)
+}
+
+eurecaServer.exports.sendReadyState = function(){
+    gameList[currentGameId].readyPlayers++;
+    console.log("ready",gameList[currentGameId].readyPlayers)
+    if(gameList[currentGameId].readyPlayers == 4){
+        for (var c in clients){
+        //execute action on client side of all clients
+            if (clients[c].configured) {
+                clients[c].remote.interact("setProp",{
+                  prop: "allReady",
+                  val: true
+                });
+                clients[c].remote.interact("removeReadyText",null);
+            }
+        }
+    }
+}
+
 //detect client disconnection
 eurecaServer.onDisconnect(function (conn) {
     console.log('Client disconnected ', conn.id);
@@ -132,23 +165,6 @@ eurecaServer.exports.handleKeys = function (keys) {
         remote.updateState(updatedClient.id, keys);
     }
     clients[conn.id].laststate = keys;
-}
-
-
-eurecaServer.exports.distribute = function(action,args) {
-    for (var c in clients){
-        //execute action on client side of all clients
-        if (clients[c].configured) {
-            clients[c].remote.interact(action,args);
-        }
-    }
-}
-
-eurecaServer.exports.getRole = function() {
-    var conn = this.connection;
-    var client = clients[conn.id];
-    console.log(client.playerType)
-    client.remote.interact("chooseRole",client.playerType)
 }
 
 server.listen(process.env.PORT || 8000);

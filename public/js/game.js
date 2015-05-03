@@ -38,7 +38,11 @@ var eurecaClientSetupGame = function() {
 
 function disconnect(){
   location.reload();
-  alert('client disconnected');
+  console.log('client disconnected');
+}
+
+function removeReadyText(){
+  waitText.destroy();
 }
 
 function sendPlatform() {
@@ -303,7 +307,7 @@ function update () {
 function replaceReadyText() {
   readyText.destroy()
   waitText = game.add.text(100, 8650, "Waiting...", {fill: "#fff", fontSize: "25px"})
-  //function sendClientReady() {}
+  eurecaServer.sendReadyState();
 }
 
 // function movePlayerRight () {

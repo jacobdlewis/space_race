@@ -56,8 +56,8 @@ function setProp(args) {
   window[args.prop] = args.val
 }
 
-var playerlanded = true;
-var player2landed = true;
+var p1touchdown = true;
+var p2touchdown = true;
 
 // player1
 
