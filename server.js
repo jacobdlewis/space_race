@@ -123,6 +123,10 @@ eurecaServer.exports.sendReadyState = function(){
                   val: true
                 });
                 clients[c].remote.interact("removeReadyText",null);
+                clients[c].remote.interact("setProp",{
+                  prop: "gameStarted",
+                  val: true
+                });
             }
         }
     }

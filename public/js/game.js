@@ -263,11 +263,6 @@ function update () {
       game.physics.arcade.collide(player2, platformGroup);
     }
 
-    if (platformGroup.children.length > 2) {
-      platformGroup.children[0].destroy();
-    }
-
-
     if(game.camera.y !== game.cameraLastY) {
       game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
       game.cameraLastY = game.camera.y;
