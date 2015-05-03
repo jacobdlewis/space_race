@@ -22,7 +22,7 @@ var gameList = {}
 var EurecaServer = require('eureca.io').EurecaServer;
 
 //create an instance of EurecaServer
-var eurecaServer = new EurecaServer({allow:['setId', 'setPlayerType', 'kill', 'updateState','interact','chooseRole']});
+var eurecaServer = new EurecaServer({allow:['setId', 'setPlayerType', 'kill', 'updateState','interact','chooseRole','createPlayer2']});
 
 //attach eureca.io to our http server
 eurecaServer.attach(server);
@@ -35,7 +35,7 @@ eurecaServer.onConnect(function (conn) {
     //the getClient method provide a proxy allowing us to call remote client functions
     var remote = eurecaServer.getClient(conn.id);
     //register the client
-    clients[conn.id] = {id:conn.id, remote:remote, playerType: nextPlayerType}
+    clients[conn.id] = {id:conn.id, remote:remote, playerType: nextPlayerType, configured: false}
     //call setId (defined in the client side)
     remote.setId(conn.id);
     
@@ -46,7 +46,7 @@ eurecaServer.exports.configurePlayer = function() {
     var conn = this.connection;
     var client = clients[conn.id];
     console.log("         ----------     ")
-    console.log(client)
+    console.log(gameList[currentGameId])
     console.log("         ----------     ")
 
     if (!gameList[currentGameId]) {
@@ -60,8 +60,9 @@ eurecaServer.exports.configurePlayer = function() {
         console.log("         ----------     ")
         ptIndex++;
 
-    } else if(gameList[currentGameId].players == 1) {
+    } else if (gameList[currentGameId].players == 1) {
 
+        gameList[currentGameId].players++;
         client.playerType = playerTypes[ptIndex];
         ptIndex++;
 
@@ -71,8 +72,7 @@ eurecaServer.exports.configurePlayer = function() {
         client.playerType = playerTypes[ptIndex];
         ptIndex++;
         for (var c in clients){
-            //execute action on client side of all clients
-            clients[c].remote.interact("createPlayer2",conn.id);
+            clients[c].remote.createPlayer2(Math.floor(Math.random()*100000000));
         }
 
     } else if(gameList[currentGameId].players == 3) {
@@ -89,6 +89,8 @@ eurecaServer.exports.configurePlayer = function() {
 
     // client.remote.interact("chooseRole",client.playerType)
     client.remote.chooseRole(client.playerType)
+
+    client.configured = true;
 }
 
 //detect client disconnection
@@ -135,7 +137,9 @@ eurecaServer.exports.handleKeys = function (keys) {
 eurecaServer.exports.distribute = function(action,args) {
     for (var c in clients){
         //execute action on client side of all clients
-        clients[c].remote.interact(action,args);
+        if (clients[c].configured) {
+            clients[c].remote.interact(action,args);
+        }
     }
 }
 

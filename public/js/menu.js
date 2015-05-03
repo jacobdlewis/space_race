@@ -20,11 +20,19 @@ var eurecaClientSetup = function() {
 
     eurecaClient.exports.chooseRole = function(role) {
       playerRole = role;
+      if (role=="astronaut2" || role=="engineer2" ) {
+        makePlayer2(1000);
+      }
     }
     
     eurecaClient.exports.interact = function(action,args) {
       window[action](args);
     }
+
+    eurecaClient.exports.createPlayer2 = function(id) {
+      makePlayer2(id);
+    }
+
 }
 
 game.state.add('menu', { preload:preload, create:eurecaClientSetup } );
@@ -50,7 +58,17 @@ function startGame() {
 }
 
 
+function makePlayer2(id) {
 
+      console.log(game)
+
+      player2 = new Player(game, id, 2);
+      player2 = player2.self;
+      player2.animations.add('left', [0]);
+      player2.animations.add('right', [1]);
+      player2.animations.add('front', [2]);
+
+}
 
 
 

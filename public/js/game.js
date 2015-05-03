@@ -60,7 +60,8 @@ var currentPlatformType = "solid";
 
 function preload () {
   game.load.image( 'platform', '/assets/platform_start.png');
-  game.load.spritesheet( 'player', '/assets/astrousa.png', 32, 64, 3);
+  game.load.spritesheet( 'player1', '/assets/astrousa.png', 32, 64, 3);
+  game.load.spritesheet( 'player2', '/assets/astroussr.png', 32, 64, 3);
   game.load.image( 'background', '/assets/space_race_bg_v2.jpg');
   game.load.image( 'leftButton', '/assets/LeftButton.png');
   game.load.image( 'rightButton', '/assets/RightButton.png');
@@ -82,7 +83,8 @@ function preload () {
   game.load.image( 'holePlatform', '/assets/hole_platform.png');
 }
 
-Player = function(game, id) {
+Player = function(game, id, num) {
+  this.num = num
   this.cursors = {
       left:false,
       right:false,
@@ -98,7 +100,7 @@ Player = function(game, id) {
   };
 
   this.game = game;
-  this.self = game.add.sprite(130, 8650, 'player');
+  this.self = game.add.sprite(90+num*5, 8650, 'player'+num);
   game.physics.enable(this.self, Phaser.Physics.ARCADE);
   this.self.body.gravity.y = playerGravity;
   this.self.id = id;
@@ -129,8 +131,8 @@ Player.prototype.update = function() {
     this.self.body.velocity.x = 0;
   }
 
-  if (cursors.up.isDown && player.body.touching.down) {
-    player.body.velocity.y = -300;
+  if (cursors.up.isDown && this.body.touching.down) {
+    this.body.velocity.y = -300;
     gameStarted = true;
   }
 
@@ -166,11 +168,12 @@ function createGame () {
   game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
   startingSpace.body.immovable = true;
 
-  player = new Player(game, myId);
+  player = new Player(game, myId, 1);
   player = player.self;
   player.animations.add('left', [0]);
   player.animations.add('right', [1]);
   player.animations.add('front', [2]);
+
 
 
   // leftButton = game.add.sprite(10, 410, 'leftButton');
@@ -231,7 +234,6 @@ function createGame () {
 }
 
 function update () {
-    console.log(playerRole)
     game.physics.arcade.collide(player, startingSpace);
     game.physics.arcade.collide(player, platformGroup);
     if (player2) {
@@ -257,6 +259,15 @@ function update () {
         x: player.x,
         y: player.y,
         vel: player.body.velocity.x
+      })
+    }
+    if (playerRole=="astronaut2") {
+      console.log(player2.body.velocity.x)
+      movePlayer2();
+      eurecaServer.distribute("updateMan2",{
+        x: player2.x,
+        y: player2.y,
+        vel: player2.body.velocity.x
       })
     }
   }
@@ -303,16 +314,6 @@ function setPlatform(args) {
 
 }
 
-
-function createPlayer2(id) {
-
-  player2 = new Player(game, id);
-  player2 = player2.self;
-  player2.animations.add('left', [0]);
-  player2.animations.add('right', [1]);
-  player2.animations.add('front', [2]);
-
-}
 
 function bouncePlayer() {
   platformGroup.children.forEach(function(child){
