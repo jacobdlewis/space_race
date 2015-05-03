@@ -76,11 +76,19 @@ var p2touchdown = true;
 function movePlayer1() {
   player.newsound = false;
   if (cursors.left.isDown || leftButtonDown) {
-      sounds.dude.turn()
-      player.newsound = "turn";
+      if (!player.turningLeft) {
+        sounds.dude.turn()
+        player.newsound = "turn";  
+        player.turningLeft = true;
+      }
       player.body.velocity.x = -150
       player.frame = 0;
     } else if (cursors.right.isDown || rightButtonDown) {
+      if (!player.turningRight) {
+        sounds.dude.turn()
+        player.newsound = "turn";
+        player.turningRight = true;  
+      }
       sounds.dude.turn()
       player.newsound = "turn";
       player.body.velocity.x = 150;
@@ -146,14 +154,20 @@ function movePlayer1() {
 // player2
 
 function movePlayer2() {
-  if (cursors.left.isDown || leftButtonDown) {
-      sounds.dude.turn()
-      player2.newsound = "turn";
+    if (cursors.left.isDown || leftButtonDown) {
+      if (!player2.turningLeft) {
+        sounds.dude.turn()
+        player2.newsound = "turn";
+        player2.turningLeft = true;  
+      }
       player2.body.velocity.x = -150
       player2.frame = 0;
     } else if (cursors.right.isDown || rightButtonDown) {
-      sounds.dude.turn()
-      player2.newsound = "turn";
+      if (!player2.turningRight) {
+        sounds.dude.turn()
+        player2.newsound = "turn";
+        player2.turningRight = true;  
+      }
       player2.body.velocity.x = 150;
       player2.frame = 1;
     } else {

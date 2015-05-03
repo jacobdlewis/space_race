@@ -73,7 +73,7 @@
                 
                 this.drum = new Tone.Player("audio/kick.wav")
                 this.drum.toMaster()
-                this.drum2 = new Tone.Player("audio/hihat.wav")
+                this.drum2 = new Tone.Player("audio/hihat-quiet.wav")
                 this.drum2.toMaster()
                 this.drum3 = new Tone.Player("audio/jump.wav")
                 this.drum3.toMaster()
