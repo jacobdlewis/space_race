@@ -58,6 +58,7 @@ var leftButtonDown = false;
 var rightButton;
 var rightButtonDown = false;
 var currentPlatformType = "US_solidPlatform";
+var lastPlatformType;
 
 function preload () {
   game.load.image( 'platform', '/assets/platform_start.png');
@@ -76,12 +77,13 @@ function preload () {
   game.load.image( 'USSR_spikePlatform', '/assets/platform_spike_ussr.png');
   game.load.image( 'US_slimePlatform', '/assets/platform_slime_usa.png');
   game.load.image( 'USSR_slimePlatform', '/assets/platform_slime_ussr.png');
-  game.load.image( 'solidPlatform', '/assets/solid_platform.png');
-  game.load.image( 'icePlatform', '/assets/ice_platform.png');
-  game.load.image( 'bouncePlatform', '/assets/bounce_platform.png');
-  game.load.image( 'spikePlatform', '/assets/spike_platform.png');
-  game.load.image( 'stickyPlatform', '/assets/sticky_platform.png');
-  game.load.image( 'holePlatform', '/assets/hole_platform.png');
+
+  game.load.spritesheet( 'solidPlatform', '/assets/button_platform_normal.png', 32, 32, 2);
+  game.load.spritesheet( 'icePlatform', '/assets/button_platform_snow.png', 32, 32, 2);
+  game.load.spritesheet( 'bouncePlatform', '/assets/button_platform_bounce.png', 32, 32, 2);
+  game.load.spritesheet( 'spikePlatform', '/assets/button_platform_spike.png', 32, 32, 2);
+  game.load.spritesheet( 'stickyPlatform', '/assets/button_platform_slime.png', 32, 32, 2);
+  //game.load.image( 'holePlatform', '/assets/hole_platform.png');
 }
 
 Player = function(game, id, num) {
@@ -195,7 +197,7 @@ function createGame () {
   }
 
   if (playerRole === "engineer1" || playerRole === "engineer2") {
-    solidPlatform = game.add.sprite(0, 400, 'solidPlatform');
+    solidPlatform = game.add.sprite(50, 400, 'solidPlatform');
     solidPlatform.fixedToCamera = true;
     solidPlatform.inputEnabled = true;
     solidPlatform.events.onInputDown.add(selectSolid, this);
@@ -203,22 +205,22 @@ function createGame () {
     icePlatform.fixedToCamera = true;
     icePlatform.inputEnabled = true;
     icePlatform.events.onInputDown.add(selectIce, this);
-    bouncePlatform = game.add.sprite(200, 400, 'bouncePlatform');
+    bouncePlatform = game.add.sprite(150, 400, 'bouncePlatform');
     bouncePlatform.fixedToCamera = true;
     bouncePlatform.inputEnabled = true;
     bouncePlatform.events.onInputDown.add(selectBounce, this);
-    spikePlatform = game.add.sprite(0, 440, 'spikePlatform');
+    spikePlatform = game.add.sprite(200, 400, 'spikePlatform');
     spikePlatform.fixedToCamera = true;
     spikePlatform.inputEnabled = true;
     spikePlatform.events.onInputDown.add(selectSpike, this);
-    stickyPlatform = game.add.sprite(100, 440, 'stickyPlatform');
+    stickyPlatform = game.add.sprite(250, 400, 'stickyPlatform');
     stickyPlatform.fixedToCamera = true;
     stickyPlatform.inputEnabled = true;
     stickyPlatform.events.onInputDown.add(selectSticky, this);
-    holePlatform = game.add.sprite(200, 440, 'holePlatform');
-    holePlatform.fixedToCamera = true;
-    holePlatform.inputEnabled = true;
-    holePlatform.events.onInputDown.add(selectHole, this);
+    // holePlatform = game.add.sprite(200, 440, 'holePlatform');
+    // holePlatform.fixedToCamera = true;
+    // holePlatform.inputEnabled = true;
+    // holePlatform.events.onInputDown.add(selectHole, this);
   }
 
   if (playerRole=="astronaut2" || playerRole=="engineer2") {
@@ -291,6 +293,7 @@ function update () {
         vel: player2.body.velocity.x
       })
     }
+    resetPlatformButtonBorders();
   }
 
 function movePlayerRight () {
@@ -313,21 +316,32 @@ function leftButtonUp () {
   leftButtonDown = false;
 }
 function selectSolid () {
+  lastPlatformType = currentPlatformType;
   currentPlatformType = "US_solidPlatform";
+  solidPlatform.frame = 1;
 }
 function selectIce () {
+  lastPlatformType = currentPlatformType;
   currentPlatformType = "US_icePlatform";
+  icePlatform.frame = 1;
 }
 function selectBounce () {
+  lastPlatformType = currentPlatformType;
   currentPlatformType = "US_bouncePlatform";
+  bouncePlatform.frame = 1;
 }
 function selectSpike () {
+  lastPlatformType = currentPlatformType;
   currentPlatformType = "US_spikePlatform";
+  spikePlatform = spikePlatform.frame = 1;
 }
 function selectSticky () {
+  lastPlatformType = currentPlatformType;
   currentPlatformType = "US_slimePlatform";
+  stickyPlatform = stickyPlatform.frame = 1;
 }
 function selectHole () {
+  lastPlatformType = currentPlatformType;
   currentPlatformType = "hole";
 }
 
@@ -383,4 +397,22 @@ function platformEffect() {
       playerHealth -= 1;
     }
   });
+}
+
+function resetPlatformButtonBorders () {
+  if (lastPlatformType === "US_solidPlatform" || lastPlatformType === "USSR_solidPlatform") {
+    solidPlatform.frame = 0;
+  }
+  if (lastPlatformType === "US_slimePlatform" || lastPlatformType === "USSR_slimePlatform") {
+    stickyPlatform.frame = 0;
+  }
+  if (lastPlatformType === "US_icePlatform" || lastPlatformType === "USSR_icePlatform") {
+    icePlatform.frame = 0;
+  }
+  if (lastPlatformType === "US_bouncePlatform" || lastPlatformType === "USSR_bouncePlatform") {
+    bouncePlatform.frame = 0;
+  }
+  if (lastPlatformType === "US_spikePlatform" || lastPlatformType === "USSR_spikePlatform") {
+    spikePlatform.frame = 0;
+  }
 }
