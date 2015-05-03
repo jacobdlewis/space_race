@@ -77,8 +77,8 @@ function preload () {
   game.load.spritesheet( 'player1', '/assets/astrousa_v2.png', 32, 64, 9);
   game.load.spritesheet( 'player2', '/assets/astroussr_v2.png', 32, 64, 9);
   game.load.image( 'background', '/assets/space_race_bg_v2.jpg');
-  game.load.image( 'leftButton', '/assets/LeftButton.png');
-  game.load.image( 'rightButton', '/assets/RightButton.png');
+  game.load.image( 'leftButton', '/assets/control_arrow_left.png');
+  game.load.image( 'rightButton', '/assets/control_arrow_right.png');
   game.load.image( 'US_solidPlatform', '/assets/platform_normal_usa.png');
   game.load.image( 'USSR_solidPlatform', '/assets/platform_normal_ussr.png');
   game.load.image( 'US_icePlatform', '/assets/platform_snow_usa.png');
