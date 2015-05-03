@@ -1,6 +1,5 @@
 
 var platformGroup;
-var myId=0;
 var ready = false;
 var nextPlatformTimer = 0;
 var gameStarted = false;
@@ -27,7 +26,6 @@ var eurecaClientSetupGame = function() {
       }
     }
     eurecaClient.exports.interact = function(action,args) {
-      console.log(action)
       window[action](args);
     }
 }
@@ -77,7 +75,7 @@ function preload () {
   game.load.image( 'holePlatform', '/assets/hole_platform.png');
 }
 
-Player = function(game) {
+Player = function(game, id) {
   this.cursors = {
       left:false,
       right:false,
@@ -96,6 +94,7 @@ Player = function(game) {
   this.self = game.add.sprite(130, 8800, 'player');
   game.physics.enable(this.self, Phaser.Physics.ARCADE);
   this.self.body.gravity.y = playerGravity;
+  this.self.id = id;
 };
 
 Player.prototype.update = function() {
@@ -151,9 +150,8 @@ function createGame () {
 
 
 
-  player = new Player(game);
+  player = new Player(game, myId);
   player = player.self;
-  player.id = myId;
   player.animations.add('left', [0]);
   player.animations.add('right', [1]);
   player.animations.add('front', [2]);
