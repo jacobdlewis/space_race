@@ -35,7 +35,8 @@ var eurecaClientSetupGame = function() {
 function sendPlatform() {
   eurecaServer.distribute("setPlatform", {
     x: cursorX,
-    y: cursorY
+    y: cursorY,
+    type: currentPlatformType
   })
 }
 
@@ -328,7 +329,7 @@ function selectHole () {
 
 function setPlatform(args) {
   if (game.time.now > nextPlatformTick && checkPlatformPlacement()) {
-    platform = new Platforms(game, args.x, args.y, currentPlatformType);
+    platform = new Platforms(game, args.x, args.y, args.type);
     platform = platform.self;
     nextPlatformTick = game.time.now + 1500;
   }

@@ -1,6 +1,10 @@
 
 /* call functions on all clients using eurecaServer.distribute*/
 
+function sendAllReady() {
+  console.log("sent");
+  eurecaServer.distribute("setAllReady",null);
+}
 
 function sendPlatform() {
 
