@@ -1,13 +1,4 @@
 
-var role = "astronaut"
-
-function chooseRole(newrole) {
-  role = newrole;
-  console.log(role + " from the chooserole function")
-}
-
-
-
 /* call functions on all clients using eurecaServer.distribute*/
 
 function sendPlatform() {
@@ -20,8 +11,10 @@ function sendPlatform() {
 }
 
 function updateMan1(args) {
-	player.x = args.x
-	player.y = args.y
+  if (playerRole != "astronaut") {
+    player.x = args.x
+    player.y = args.y  
+  }
 }
 
 

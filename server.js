@@ -34,10 +34,7 @@ eurecaServer.onConnect(function (conn) {
     var remote = eurecaServer.getClient(conn.id);
     //register the client
     clients[conn.id] = {id:conn.id, remote:remote, playerType: nextPlayerType}
-  //  console.log(clients[conn.id].playerType)
-   // console.log(remote.interact)
-   // remote.interact("chooseRole",clients[conn.id].playerType)
-    
+    console.log(clients[conn.id].playerType)
     if(gameList[currentGameId] && gameList[currentGameId].players == 2){
         currentGameId++;
         gameList[currentGameId] = {};
@@ -53,7 +50,6 @@ eurecaServer.onConnect(function (conn) {
     }else {nextPlayerType = 'astronaut'}
     //here we call setId (defined in the client side)
     remote.setId(conn.id);
-    console.log(clients);
 });
 
 //detect client disconnection
@@ -107,9 +103,8 @@ eurecaServer.exports.distribute = function(action,args) {
 eurecaServer.exports.getRole = function() {
     var conn = this.connection;
     var client = clients[conn.id];
+    console.log(client.playerType)
     client.remote.interact("chooseRole",client.playerType)
-    //console.log(client.playerType)
-    //return client.playerType;
 }
 
 server.listen(process.env.PORT || 8000);
