@@ -299,7 +299,7 @@ function update () {
     cursorX = game.input.x - 50;
     cursorY = (game.world.y * -1) + game.input.y;
 
-    if (playerRole=="astronaut1" && allReady) {
+    if (playerRole=="astronaut1") {
       movePlayer1();
       eurecaServer.distribute("updateMan1",{
         x: player.x,
@@ -308,7 +308,7 @@ function update () {
         newsound: player.newsound
       })
     }
-    if (playerRole=="astronaut2" && allReady) {
+    if (playerRole=="astronaut2") {
       movePlayer2();
       eurecaServer.distribute("updateMan2",{
         x: player2.x,
