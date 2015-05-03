@@ -121,6 +121,7 @@ Player = function(game, id, num) {
   this.self.id = id;
   this.self.animations.add('left', [0, 1, 2, 3], 10, true);
   this.self.animations.add('right', [4, 5, 6, 7], 10, true);
+  this.self.frame = 8;
 };
 
 Player.prototype.update = function() {

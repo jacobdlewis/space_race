@@ -76,24 +76,24 @@ var p2touchdown = true;
 function movePlayer1() {
   player.newsound = false;
   if (cursors.left.isDown || leftButtonDown) {
-      sounds.dude.turn()
+      sounds.dude.turn();
       player.newsound = "turn";
-      player.body.velocity.x = -150
-      player.frame = 0;
+      player.body.velocity.x = -150;
+      player.animations.play("left");
     } else if (cursors.right.isDown || rightButtonDown) {
-      sounds.dude.turn()
+      sounds.dude.turn();
       player.newsound = "turn";
       player.body.velocity.x = 150;
-      player.frame = 1;
+      player.animations.play('right');
     } else {
       if (player.body.velocity.x > 0) {
         player.body.velocity.x -= 5;
-        player.frame = 0;
+        player.animations.play('left');
       } else if (player.body.velocity.x < 0) {
         player.body.velocity.x += 5;
-        player.frame = 1;
+        player.animations.play('right');
       } else if (player.body.velocity.x === 0) {
-        player.frame = 2;
+        player.frame = 8;
       }
     }
 
@@ -154,15 +154,15 @@ function movePlayer2() {
       sounds.dude.turn()
       player2.newsound = "turn";
       player2.body.velocity.x = -150
-      player2.frame = 0;
+      player2.animations.play('left')
     } else if (cursors.right.isDown || rightButtonDown) {
       sounds.dude.turn()
       player2.newsound = "turn";
       player2.body.velocity.x = 150;
-      player2.frame = 1;
+      player2.animations.play('right')
     } else {
       player2.body.velocity.x = 0;
-      player2.frame = 2;
+      player2.frame = 8;
     }
 
     if (player2.body.touching.down && player2.body.touching.down != p2touchdown) {
