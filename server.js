@@ -17,9 +17,11 @@ var playerTypes = ['astronaut1','engineer1','astronaut2','engineer2']
 var ptIndex = 0;
 //determines if new game is needed
 var currentGameId = 0;
-var gameList = {}
+var games = {}
 //get EurecaServer class
 var EurecaServer = require('eureca.io').EurecaServer;
+
+var occupants = {}
 
 //create an instance of EurecaServer
 var eurecaServer = new EurecaServer({allow:['setId', 'setPlayerType', 'kill', 'updateState','interact','chooseRole','createPlayer2']});
@@ -45,52 +47,52 @@ eurecaServer.exports.configurePlayer = function() {
 
     var conn = this.connection;
     var client = clients[conn.id];
-    console.log("         ----------     ")
-    console.log(gameList[currentGameId])
-    console.log("         ----------     ")
+    // console.log(games[currentGameId])
+    // 
+   // for (var i=0;i<games.length;i++) {
 
-    if (!gameList[currentGameId]) {
+        currgame = games[0];
+        console.log(currgame)
 
-        gameList[currentGameId]={}
-        gameList[currentGameId].players = 1;
-        client.playerType = playerTypes[ptIndex];
-
-        console.log("         ----------     ")
-        console.log(client.playerType)
-        console.log("         ----------     ")
-        ptIndex++;
-
-    } else if (gameList[currentGameId].players == 1) {
-
-        gameList[currentGameId].players++;
-        client.playerType = playerTypes[ptIndex];
-        ptIndex++;
-
-    } else if(gameList[currentGameId].players == 2) {
-
-        gameList[currentGameId].players++;
-        client.playerType = playerTypes[ptIndex];
-        ptIndex++;
-        for (var c in clients){
-            clients[c].remote.createPlayer2(Math.floor(Math.random()*100000000));
+        if (!currgame) {
+            games[0] = {}
+            for (var i=0;i<playerTypes.length;i++) {
+                occupants[playerTypes[i]] = "vacant";
+            }
         }
 
-    } else if(gameList[currentGameId].players == 3) {
+        if (occupants[playerTypes[0]]=="vacant") {
+            
+            occupants[playerTypes[0]] = client;
+            client.playerType = playerTypes[0];
 
-        gameList[currentGameId].players++;
-        client.playerType = playerTypes[ptIndex];
-        ptIndex++;
+        } else if (occupants[playerTypes[1]]=="vacant") {
 
-    } else {
+            occupants[playerTypes[1]] = client;
+            client.playerType = playerTypes[1];
 
-        currentGameId++;
-        gameList[currentGameId] = {};
-        gameList[currentGameId].players = 1;
+        } else if(occupants[playerTypes[2]]=="vacant") {
 
-    }
+            occupants[playerTypes[2]] = client;
+            client.playerType = playerTypes[2];
+            for (var c in clients){
+                clients[c].remote.createPlayer2(Math.floor(Math.random()*100000000));
+            }
+
+        } else if(occupants[playerTypes[3]]=="vacant") {
+
+            occupants[playerTypes[3]] = client;
+            client.playerType = playerTypes[3];
+
+        } else {
+         //   alert("too many people, please come back later")
+        }
+   // }
 
     // client.remote.interact("chooseRole",client.playerType)
     client.remote.chooseRole(client.playerType)
+
+    occupants[client.playerType] = conn.id
 
     client.configured = true;
 }
@@ -98,8 +100,12 @@ eurecaServer.exports.configurePlayer = function() {
 //detect client disconnection
 eurecaServer.onDisconnect(function (conn) {
     console.log('Client disconnected ', conn.id);
+
+    occupants[clients[conn.id].playerType] = "vacant";
+
     var removeId = clients[conn.id].id;
     delete clients[conn.id];
+
     for (var c in clients){
         var remote = clients[c].remote;
         remote.interact('disconnect',null);

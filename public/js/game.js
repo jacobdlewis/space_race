@@ -38,7 +38,6 @@ var eurecaClientSetupGame = function() {
 
 function disconnect(){
   location.reload();
-  alert('client disconnected');
 }
 
 function sendPlatform() {
