@@ -17,9 +17,15 @@ var playerTypes = ['astronaut1','engineer1','astronaut2','engineer2']
 var ptIndex = 0;
 //determines if new game is needed
 var currentGameId = 0;
-var gameList = {}
+var games = [
+    {
+        readyPlayers: 0
+    }
+]
 //get EurecaServer class
 var EurecaServer = require('eureca.io').EurecaServer;
+
+var occupants = {}
 
 //create an instance of EurecaServer
 var eurecaServer = new EurecaServer({allow:['setId', 'setPlayerType', 'kill', 'updateState','interact','chooseRole','createPlayer2']});
@@ -45,52 +51,57 @@ eurecaServer.exports.configurePlayer = function() {
 
     var conn = this.connection;
     var client = clients[conn.id];
-    console.log("         ----------     ")
-    console.log(gameList[currentGameId])
-    console.log("         ----------     ")
 
-    if (!gameList[currentGameId]) {
+    currgame = games[0];
+    console.log(currgame)
 
-        gameList[currentGameId]={readyPlayers: 0};
-        gameList[currentGameId].players = 1;
-        client.playerType = playerTypes[ptIndex];
+    var anyonehere = false
+    for (var key in occupants) {
+        if (occupants[key]!="vacant") {
+            anyonehere = true;
+            break;
+        }
+    }
 
-        console.log("         ----------     ")
-        console.log(client.playerType)
-        console.log("         ----------     ")
-        ptIndex++;
+    if (!currgame || !anyonehere) {
+        games[0] = {
+            readyPlayers: 0
+        }
+        for (var i=0;i<playerTypes.length;i++) {
+            occupants[playerTypes[i]] = "vacant";
+        }
+    }
 
-    } else if (gameList[currentGameId].players == 1) {
+    if (occupants[playerTypes[0]]=="vacant") {
+        
+        occupants[playerTypes[0]] = client;
+        client.playerType = playerTypes[0];
 
-        gameList[currentGameId].players++;
-        client.playerType = playerTypes[ptIndex];
-        ptIndex++;
+    } else if (occupants[playerTypes[1]]=="vacant") {
 
-    } else if(gameList[currentGameId].players == 2) {
+        occupants[playerTypes[1]] = client;
+        client.playerType = playerTypes[1];
 
-        gameList[currentGameId].players++;
-        client.playerType = playerTypes[ptIndex];
-        ptIndex++;
+    } else if(occupants[playerTypes[2]]=="vacant") {
+
+        occupants[playerTypes[2]] = client;
+        client.playerType = playerTypes[2];
         for (var c in clients){
             clients[c].remote.createPlayer2(Math.floor(Math.random()*100000000));
         }
 
-    } else if(gameList[currentGameId].players == 3) {
+    } else if(occupants[playerTypes[3]]=="vacant") {
 
-        gameList[currentGameId].players++;
-        client.playerType = playerTypes[ptIndex];
-        ptIndex++;
+        occupants[playerTypes[3]] = client;
+        client.playerType = playerTypes[3];
 
     } else {
-
-        currentGameId++;
-        gameList[currentGameId] = {};
-        gameList[currentGameId].players = 1;
-
+     //   alert("too many people, please come back later")
     }
-
     // client.remote.interact("chooseRole",client.playerType)
     client.remote.chooseRole(client.playerType)
+
+    occupants[client.playerType] = conn.id
 
     client.configured = true;
 }
@@ -112,9 +123,9 @@ eurecaServer.exports.getRole = function() {
 }
 
 eurecaServer.exports.sendReadyState = function(){
-    gameList[currentGameId].readyPlayers++;
-    console.log("ready",gameList[currentGameId].readyPlayers)
-    if(gameList[currentGameId].readyPlayers == 4){
+    games[0].readyPlayers++;
+    console.log("ready",games[0].readyPlayers)
+    if(games[0].readyPlayers == 4){
         for (var c in clients){
         //execute action on client side of all clients
             if (clients[c].configured) {
@@ -135,8 +146,13 @@ eurecaServer.exports.sendReadyState = function(){
 //detect client disconnection
 eurecaServer.onDisconnect(function (conn) {
     console.log('Client disconnected ', conn.id);
+
+    //games[0].readyPlayers--;
+    occupants[clients[conn.id].playerType] = "vacant";
+
     var removeId = clients[conn.id].id;
     delete clients[conn.id];
+
     for (var c in clients){
         var remote = clients[c].remote;
         remote.interact('disconnect',null);
