@@ -34,22 +34,22 @@ eurecaServer.onConnect(function (conn) {
     var remote = eurecaServer.getClient(conn.id);
     //register the client
     clients[conn.id] = {id:conn.id, remote:remote, playerType: nextPlayerType}
-    console.log(clients[conn.id].playerType)
-    if(gameList[currentGameId] && gameList[currentGameId].players == 2){
+    //call setId (defined in the client side)
+    remote.setId(conn.id);
+    if(gameList[currentGameId] && gameList[currentGameId].players == 4){
         currentGameId++;
         gameList[currentGameId] = {};
         gameList[currentGameId].players = 1;
-    } else if(!gameList[currentGameId]){
+    }
+    else if(!gameList[currentGameId]){
         gameList[currentGameId]={}
         gameList[currentGameId].players = 1;
     } else {
-        gameList[currentGameId].players = 2;
+        gameList[currentGameId].players++;
     }
     if(nextPlayerType == 'astronaut'){
         nextPlayerType = 'engineer'
     }else {nextPlayerType = 'astronaut'}
-    //here we call setId (defined in the client side)
-    remote.setId(conn.id);
 });
 
 //detect client disconnection
