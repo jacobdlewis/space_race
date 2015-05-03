@@ -13,7 +13,14 @@ function sendPlatform() {
 function updateMan1(args) {
   if (playerRole != "astronaut") {
     player.x = args.x
-    player.y = args.y  
+    player.y = args.y
+    xVelocity = args.vel
+    console.log(player.body.velocity.x);
+    if(xVelocity < 0){
+      player.frame = 0;
+    } else if(xVelocity > 0) {
+      player.frame = 1;
+    }else {player.frame = 2}
   }
 }
 
