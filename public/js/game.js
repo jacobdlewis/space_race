@@ -173,7 +173,13 @@ function createGame () {
   player.animations.add('right', [1]);
   player.animations.add('front', [2]);
 
-
+  if (playerRole=="astronaut2" || playerRole=="engineer2") {
+    player2 = new Player(game, 1000, 2);
+    player2 = player2.self;
+    player2.animations.add('left', [0]);
+    player2.animations.add('right', [1]);
+    player2.animations.add('front', [2]);
+  }
 
   // leftButton = game.add.sprite(10, 410, 'leftButton');
   // leftButton.fixedToCamera = true;
@@ -262,7 +268,6 @@ function update () {
       })
     }
     if (playerRole=="astronaut2") {
-      console.log(player2.body.velocity.x)
       movePlayer2();
       eurecaServer.distribute("updateMan2",{
         x: player2.x,
