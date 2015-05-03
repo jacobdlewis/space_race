@@ -38,6 +38,11 @@ var eurecaClientSetupGame = function() {
 
 function disconnect(){
   location.reload();
+
+}
+
+function removeReadyText(){
+  waitText.destroy();
 }
 
 function sendPlatform() {
@@ -69,11 +74,11 @@ var lastPlatformType;
 
 function preload () {
   game.load.image( 'platform', '/assets/platform_start.png');
-  game.load.spritesheet( 'player1', '/assets/astrousa.png', 32, 64, 3);
-  game.load.spritesheet( 'player2', '/assets/astroussr.png', 32, 64, 3);
+  game.load.spritesheet( 'player1', '/assets/astrousa_v2.png', 32, 64, 9);
+  game.load.spritesheet( 'player2', '/assets/astroussr_v2.png', 32, 64, 9);
   game.load.image( 'background', '/assets/space_race_bg_v2.jpg');
-  game.load.image( 'leftButton', '/assets/LeftButton.png');
-  game.load.image( 'rightButton', '/assets/RightButton.png');
+  game.load.image( 'leftButton', '/assets/control_arrow_left.png');
+  game.load.image( 'rightButton', '/assets/control_arrow_right.png');
   game.load.image( 'US_solidPlatform', '/assets/platform_normal_usa.png');
   game.load.image( 'USSR_solidPlatform', '/assets/platform_normal_ussr.png');
   game.load.image( 'US_icePlatform', '/assets/platform_snow_usa.png');
@@ -114,6 +119,8 @@ Player = function(game, id, num) {
   game.physics.enable(this.self, Phaser.Physics.ARCADE);
   this.self.body.gravity.y = playerGravity;
   this.self.id = id;
+  this.self.animations.add('left', [0, 1, 2, 3], 10, true);
+  this.self.animations.add('right', [4, 5, 6, 7], 10, true);
 };
 
 Player.prototype.update = function() {
@@ -184,9 +191,6 @@ function createGame () {
 
   player = new Player(game, myId, 1);
   player = player.self;
-  player.animations.add('left', [0]);
-  player.animations.add('right', [1]);
-  player.animations.add('front', [2]);
 
 
   if (playerRole === "astronaut1" || playerRole === "astronaut2") {
@@ -233,9 +237,6 @@ function createGame () {
   if (playerRole=="astronaut2" || playerRole=="engineer2") {
     player2 = new Player(game, 1000, 2);
     player2 = player2.self;
-    player2.animations.add('left', [0]);
-    player2.animations.add('right', [1]);
-    player2.animations.add('front', [2]);
   }
 
   cursors = game.input.keyboard.createCursorKeys();
@@ -261,11 +262,6 @@ function update () {
       game.physics.arcade.collide(player2, startingSpace);
       game.physics.arcade.collide(player2, platformGroup);
     }
-
-    if (platformGroup.children.length > 2) {
-      platformGroup.children[0].destroy();
-    }
-
 
     if(game.camera.y !== game.cameraLastY) {
       game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
@@ -306,7 +302,7 @@ function update () {
 function replaceReadyText() {
   readyText.destroy()
   waitText = game.add.text(100, 8650, "Waiting...", {fill: "#fff", fontSize: "25px"})
-  //function sendClientReady() {}
+  eurecaServer.sendReadyState();
 }
 
 // function movePlayerRight () {

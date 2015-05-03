@@ -47,54 +47,88 @@ eurecaServer.exports.configurePlayer = function() {
 
     var conn = this.connection;
     var client = clients[conn.id];
-    // console.log(games[currentGameId])
-    // 
-   // for (var i=0;i<games.length;i++) {
 
-        currgame = games[0];
-        console.log(currgame)
+    currgame = games[0];
+    console.log(currgame)
 
-        if (!currgame) {
-            games[0] = {}
-            for (var i=0;i<playerTypes.length;i++) {
-                occupants[playerTypes[i]] = "vacant";
-            }
+    if (!currgame) {
+        games[0] = {
+            readyPlayers: 0
+        }
+        for (var i=0;i<playerTypes.length;i++) {
+            occupants[playerTypes[i]] = "vacant";
+        }
+    }
+
+    if (occupants[playerTypes[0]]=="vacant") {
+        
+        occupants[playerTypes[0]] = client;
+        client.playerType = playerTypes[0];
+
+    } else if (occupants[playerTypes[1]]=="vacant") {
+
+        occupants[playerTypes[1]] = client;
+        client.playerType = playerTypes[1];
+
+    } else if(occupants[playerTypes[2]]=="vacant") {
+
+        occupants[playerTypes[2]] = client;
+        client.playerType = playerTypes[2];
+        for (var c in clients){
+            clients[c].remote.createPlayer2(Math.floor(Math.random()*100000000));
         }
 
-        if (occupants[playerTypes[0]]=="vacant") {
-            
-            occupants[playerTypes[0]] = client;
-            client.playerType = playerTypes[0];
+    } else if(occupants[playerTypes[3]]=="vacant") {
 
-        } else if (occupants[playerTypes[1]]=="vacant") {
+        occupants[playerTypes[3]] = client;
+        client.playerType = playerTypes[3];
 
-            occupants[playerTypes[1]] = client;
-            client.playerType = playerTypes[1];
-
-        } else if(occupants[playerTypes[2]]=="vacant") {
-
-            occupants[playerTypes[2]] = client;
-            client.playerType = playerTypes[2];
-            for (var c in clients){
-                clients[c].remote.createPlayer2(Math.floor(Math.random()*100000000));
-            }
-
-        } else if(occupants[playerTypes[3]]=="vacant") {
-
-            occupants[playerTypes[3]] = client;
-            client.playerType = playerTypes[3];
-
-        } else {
-         //   alert("too many people, please come back later")
-        }
-   // }
-
+    } else {
+     //   alert("too many people, please come back later")
+    }
     // client.remote.interact("chooseRole",client.playerType)
     client.remote.chooseRole(client.playerType)
 
     occupants[client.playerType] = conn.id
 
     client.configured = true;
+}
+
+eurecaServer.exports.distribute = function(action,args) {
+    for (var c in clients){
+        //execute action on client side of all clients
+        if (clients[c].configured) {
+            clients[c].remote.interact(action,args);
+        }
+    }
+}
+
+eurecaServer.exports.getRole = function() {
+    var conn = this.connection;
+    var client = clients[conn.id];
+    console.log(client.playerType)
+    client.remote.interact("chooseRole",client.playerType)
+}
+
+eurecaServer.exports.sendReadyState = function(){
+    games[0].readyPlayers++;
+    console.log("ready",games[0].readyPlayers)
+    if(games[0].readyPlayers == 4){
+        for (var c in clients){
+        //execute action on client side of all clients
+            if (clients[c].configured) {
+                clients[c].remote.interact("setProp",{
+                  prop: "allReady",
+                  val: true
+                });
+                clients[c].remote.interact("removeReadyText",null);
+                clients[c].remote.interact("setProp",{
+                  prop: "gameStarted",
+                  val: true
+                });
+            }
+        }
+    }
 }
 
 //detect client disconnection
@@ -138,23 +172,6 @@ eurecaServer.exports.handleKeys = function (keys) {
         remote.updateState(updatedClient.id, keys);
     }
     clients[conn.id].laststate = keys;
-}
-
-
-eurecaServer.exports.distribute = function(action,args) {
-    for (var c in clients){
-        //execute action on client side of all clients
-        if (clients[c].configured) {
-            clients[c].remote.interact(action,args);
-        }
-    }
-}
-
-eurecaServer.exports.getRole = function() {
-    var conn = this.connection;
-    var client = clients[conn.id];
-    console.log(client.playerType)
-    client.remote.interact("chooseRole",client.playerType)
 }
 
 server.listen(process.env.PORT || 8000);
