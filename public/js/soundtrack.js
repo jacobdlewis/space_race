@@ -62,7 +62,9 @@
             },
             note: function() {
                 note = Math.floor(Math.random()*8)*50+100;
-                sounds.dude.synth.triggerAttackRelease(note, 0.1, 0,1);
+              //  this.synth.triggerAttackRelease(note, 0.1);
+                sounds.stack.push(this.synth.triggerAttackRelease.bind(this.synth,note,0.1))
+           
               //  this.osc.start();
             }
         }
