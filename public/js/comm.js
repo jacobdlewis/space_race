@@ -88,11 +88,9 @@ function movePlayer1() {
       if (!player.turningRight) {
         sounds.dude.turn()
         player.newsound = "turn";
-        player.turningRight = true;  
+        player.turningRight = true; 
         player.turningLeft = false;  
       }
-      sounds.dude.turn()
-      player.newsound = "turn";
       player.body.velocity.x = 150;
       player.animations.play('right');
     } else {
