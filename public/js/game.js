@@ -7,6 +7,7 @@ var gameStarted = false;
 var eurecaServer;
 var eClient;
 var created = false;
+var playerRole;
 
 var eurecaClientSetupGame = function() {
     eClient = eurecaClient;
@@ -30,6 +31,24 @@ var eurecaClientSetupGame = function() {
       window[action](args);
     }
 }
+
+/* call functions on all clients using eurecaServer.distribute*/
+
+function sendPlatform() {
+
+  eurecaServer.distribute("setPlatform", {
+    x: cursorX,
+    y: cursorY
+  })
+
+}
+
+
+function chooseRole(role) {
+  playerRole = role;
+}
+
+/////////////////////////////////////////////////////////////////
 
 game.state.add('playgame', { preload: preload, create:eurecaClientSetupGame, update:update });
 var platformX;
@@ -116,12 +135,7 @@ Player.prototype.update = function() {
 
 function createGame () {
   eurecaServer.playerHandshake();
-  role = eurecaServer.getRole(function() {
-    role = role.result
-    console.log(role)
-  });
-  
-  
+  eurecaServer.getRole();
   game.physics.startSystem(Phaser.Physics.ARCADE);
   game.world.setBounds(0, 0, 320, 9000);
 
@@ -212,14 +226,6 @@ function update () {
     cursorX = game.input.x - 50;
     cursorY = (game.world.y * -1) + game.input.y;
 
-   
- //   if (role=="man1") {
-      movePlayer1();
-   /*   eurecaServer.distribute("updateMan1",{
-        x: player.x,
-        y: player.y
-      })
-    } */
   }
 
 function movePlayerRight () {
@@ -274,20 +280,4 @@ function setPlatform(args) {
       platformGroup.children[0].destroy();
     }
   }
-}
-
-/* call functions on all clients using eurecaServer.distribute*/
-
-function sendPlatform() {
-
-  eurecaServer.distribute("setPlatform", {
-    x: cursorX,
-    y: cursorY
-  })
-
-}
-
-
-function chooseRole(role) {
-  console.log(role)
 }
