@@ -32,10 +32,13 @@ function updateMan1(args) {
 function movePlayer1() {
 	if (cursors.left.isDown || leftButtonDown) {
       player.body.velocity.x = -150
+      player.frame = 0;
     } else if (cursors.right.isDown || rightButtonDown) {
       player.body.velocity.x = 150;
+      player.frame = 1;
     } else {
       player.body.velocity.x = 0;
+      player.frame = 2;
     }
 
     if (cursors.up.isDown && player.body.touching.down) {
