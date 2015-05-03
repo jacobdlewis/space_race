@@ -239,13 +239,9 @@ function createGame () {
   platformGroup.setAll('enableBody', true);
   platformGroup.setAll('body.immovable', true);
 
+  readyText = game.add.text(40, 8650, "Click When Ready!", {fill: "#fff", fontSize: "25px"});
+
   created = true;
-  setTimeout(function() {
-    eurecaServer.distribute("setProp",{
-      prop: "gameStarted",
-      val: true
-    })
-  },3000)
 
 }
 
@@ -271,6 +267,10 @@ function update () {
       game.camera.y -= cameraScrollRate;
     }
 
+    if (gameStarted === false) {
+      game.background.events.onInputDown.add(replaceReadyText, this);
+    }
+
     cursorX = game.input.x - 50;
     cursorY = (game.world.y * -1) + game.input.y;
 
@@ -292,6 +292,12 @@ function update () {
       })
     }
   }
+
+function replaceReadyText() {
+  readyText.destroy()
+  waitText = game.add.text(100, 8650, "Waiting...", {fill: "#fff", fontSize: "25px"})
+  //function sendClientReady() {}
+}
 
 function movePlayerRight () {
   rightButtonDown = true;
