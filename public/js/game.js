@@ -125,6 +125,7 @@ Player = function(game, id, num) {
   this.self.id = id;
   this.self.animations.add('left', [0, 1, 2, 3], 10, true);
   this.self.animations.add('right', [4, 5, 6, 7], 10, true);
+  this.self.frame = 8;
 };
 
 Player.prototype.update = function() {
@@ -190,7 +191,7 @@ function createGame () {
     game.background.events.onInputDown.add(sendPlatform,this);
   }
 
-  startingSpace = game.add.sprite(110, 8750, 'platform');
+  startingSpace = game.add.sprite(-5, 8750, 'platform');
   game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
   startingSpace.body.immovable = true;
 
@@ -283,7 +284,7 @@ function update () {
 
     if(game.camera.y !== game.cameraLastY) {
       game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
-      game.paralax_bg.y -= 0.5 * (game.cameraLastY - game.camera.y);
+      //game.paralax_bg.y -= 0.5 * (game.cameraLastY - game.camera.y);
       game.cameraLastY = game.camera.y;
     }
 
@@ -395,10 +396,6 @@ function checkPlatformPlacement() {
       }
     }
   }
-}
-
-function platformPlacementForEach() {
-
 }
 
 function createPlayer2(id) {

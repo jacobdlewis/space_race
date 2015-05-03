@@ -80,28 +80,30 @@ function movePlayer1() {
         sounds.dude.turn()
         player.newsound = "turn";  
         player.turningLeft = true;
+        player.turningRight = false; 
       }
       player.body.velocity.x = -150
-      player.frame = 0;
+      player.animations.play("left");
     } else if (cursors.right.isDown || rightButtonDown) {
       if (!player.turningRight) {
         sounds.dude.turn()
         player.newsound = "turn";
         player.turningRight = true;  
+        player.turningLeft = false;  
       }
       sounds.dude.turn()
       player.newsound = "turn";
       player.body.velocity.x = 150;
-      player.frame = 1;
+      player.animations.play('right');
     } else {
       if (player.body.velocity.x > 0) {
         player.body.velocity.x -= 5;
-        player.frame = 0;
+        player.animations.play('left');
       } else if (player.body.velocity.x < 0) {
         player.body.velocity.x += 5;
-        player.frame = 1;
+        player.animations.play('right');
       } else if (player.body.velocity.x === 0) {
-        player.frame = 2;
+        player.frame = 8;
       }
     }
 
@@ -145,8 +147,12 @@ function movePlayer1() {
     }
 
     if (player.y > game.camera.y + 480 || playerHealth <= 0) {
+      var gameOverTime = game.time.now + 3000;
       gameOverText = game.add.text(game.camera.x + 70, game.camera.y + 160, "GAME OVER", { fontSize: '32px', fill: 'white' });
       cameraScrollRate = 0;
+      if (game.time.now > gameOverTime) {
+        game.state.start('gameOver');
+      }
     }
 
 }
@@ -158,21 +164,23 @@ function movePlayer2() {
       if (!player2.turningLeft) {
         sounds.dude.turn()
         player2.newsound = "turn";
-        player2.turningLeft = true;  
+        player2.turningLeft = true; 
+        player2.turningRight = false;  
       }
       player2.body.velocity.x = -150
-      player2.frame = 0;
+      player2.animations.play('left')
     } else if (cursors.right.isDown || rightButtonDown) {
       if (!player2.turningRight) {
         sounds.dude.turn()
         player2.newsound = "turn";
-        player2.turningRight = true;  
+        player2.turningRight = true; 
+        player2.turningLeft = false;  
       }
       player2.body.velocity.x = 150;
-      player2.frame = 1;
+      player2.animations.play('right')
     } else {
       player2.body.velocity.x = 0;
-      player2.frame = 2;
+      player2.frame = 8;
     }
 
     if (player2.body.touching.down && player2.body.touching.down != p2touchdown) {
