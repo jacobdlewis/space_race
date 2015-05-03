@@ -23,7 +23,20 @@ function updateMan1(args) {
       player.frame = 0;
     } else if(xVelocity > 0) {
       player.frame = 1;
-    }else {player.frame = 2}
+    } else {player.frame = 2}
+    if (args.newsound) {
+      switch(args.newsound) {
+        case "turn":
+            sounds.dude.turn();
+          break;
+        case "jump":
+            sounds.dude.jump();
+          break;
+        case "land":
+            sounds.dude.land();
+          break;
+      }
+    }
   }
 }
 function updateMan2(args) {
@@ -35,7 +48,7 @@ function updateMan2(args) {
       player2.frame = 0;
     } else if(xVelocity > 0) {
       player2.frame = 1;
-    }else {player2.frame = 2}
+    } else {player2.frame = 2}
   }
 }
 
@@ -43,14 +56,21 @@ function setProp(args) {
   window[args.prop] = args.val
 }
 
+var playerlanded = true;
+var player2landed = true;
 
 // player1
 
 function movePlayer1() {
+  player.newsound = false;
   if (cursors.left.isDown || leftButtonDown) {
+      sounds.dude.turn()
+      player.newsound = "turn";
       player.body.velocity.x = -150
       player.frame = 0;
     } else if (cursors.right.isDown || rightButtonDown) {
+      sounds.dude.turn()
+      player.newsound = "turn";
       player.body.velocity.x = 150;
       player.frame = 1;
     } else {
@@ -65,7 +85,15 @@ function movePlayer1() {
       }
     }
 
+    if (player.body.touching.down && player.body.touching.down != p1touchdown) {
+      sounds.dude.land()
+      player.newsound = "land";
+    }
+    p1touchdown = player.body.touching.down;
+
     if (cursors.up.isDown && player.body.touching.down) {
+      sounds.dude.jump()
+      player.newsound = "jump";
       player.body.velocity.y = -300;
       gameStarted = true;
     }
@@ -107,15 +135,22 @@ function movePlayer1() {
 
 function movePlayer2() {
   if (cursors.left.isDown || leftButtonDown) {
+      sounds.dude.turn()
       player2.body.velocity.x = -150
       player2.frame = 0;
     } else if (cursors.right.isDown || rightButtonDown) {
+      sounds.dude.turn()
       player2.body.velocity.x = 150;
       player2.frame = 1;
     } else {
       player2.body.velocity.x = 0;
       player2.frame = 2;
     }
+
+    if (player2.body.touching.down && player2.body.touching.down != p2touchdown) {
+      sounds.dude.land()
+    }
+    p2touchdown = player2.body.touching.down;
 
     if (cursors.up.isDown && player2.body.touching.down) {
       player2.body.velocity.y = -300;

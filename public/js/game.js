@@ -11,6 +11,9 @@ var platform = 0;
 var playerHealth = 2;
 var nextPlatformTick = 0;
 
+var sounds = new Soundtrack();
+sounds.bg.start();
+
 var eurecaClientSetupGame = function() {
     eClient = eurecaClient;
     if(!created){
@@ -276,7 +279,8 @@ function update () {
       eurecaServer.distribute("updateMan1",{
         x: player.x,
         y: player.y,
-        vel: player.body.velocity.x
+        vel: player.body.velocity.x,
+        newsound: player.newsound
       })
     }
     if (playerRole=="astronaut2") {
@@ -298,7 +302,7 @@ function rightButtonUp () {
 }
 function jumpPlayer () {
   if (player.body.touching.down) {
-  player.body.velocity.y = -300;
+    player.body.velocity.y = -300;
   }
 }
 function movePlayerLeft () {
