@@ -225,13 +225,13 @@ function update () {
     cursorX = game.input.x - 50;
     cursorY = (game.world.y * -1) + game.input.y;
 
- //   if (role=="man1") {
-     // movePlayer1();
-   /*   eurecaServer.distribute("updateMan1",{
+    if (playerRole=="astronaut") {
+      movePlayer1();
+      eurecaServer.distribute("updateMan1",{
         x: player.x,
         y: player.y
       })
-    } */
+    }
   }
 
 function movePlayerRight () {
