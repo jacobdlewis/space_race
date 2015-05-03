@@ -1,6 +1,6 @@
 # Space Race
 
-![Screenshot](/public/assets/astrousa.png)
+![Screenshot](/public/assets/astrousa_v2.png)
 
 [space-race.herokuapp.com](http://space-race.herokuapp.com)
 
@@ -19,5 +19,3 @@ Install dependencies
 `node server.js`
 
 Load the project at [http://localhost:8000](http://localhost:8000)
-
-
