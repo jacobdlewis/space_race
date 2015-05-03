@@ -1,7 +1,6 @@
 
 var platformGroup;
 var ready = false;
-var nextPlatformTimer = 0;
 var gameStarted = false;
 var eurecaServer;
 var eClient;
@@ -9,6 +8,8 @@ var created = false;
 var playerRole;
 var player2 = false;
 var platform = 0;
+var playerHealth = 2;
+var nextPlatformTick = 0;
 
 var eurecaClientSetupGame = function() {
     eClient = eurecaClient;
@@ -46,17 +47,15 @@ function chooseRole(role) {
 }
 
 game.state.add('playgame', { preload: preload, create:eurecaClientSetupGame, update:update });
-var platformX;
 var cursorX;
 var cursorY;
-var maxPlatforms = 2;
 var cameraScrollRate = .05;
 var playerGravity = 350;
 var leftButton;
 var leftButtonDown = false;
 var rightButton;
 var rightButtonDown = false;
-var currentPlatformType = "solid";
+var currentPlatformType = "US_solidPlatform";
 
 function preload () {
   game.load.image( 'platform', '/assets/platform_start.png');
@@ -235,11 +234,12 @@ function createGame () {
 
 function update () {
     game.physics.arcade.collide(player, startingSpace);
-    game.physics.arcade.collide(player, platformGroup);
+    game.physics.arcade.collide(player, platformGroup, platformEffect);
     if (player2) {
       game.physics.arcade.collide(player2, startingSpace);
       game.physics.arcade.collide(player2, platformGroup);
     }
+
 
     if(game.camera.y !== game.cameraLastY) {
       game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
@@ -298,29 +298,47 @@ function selectBounce () {
   currentPlatformType = "US_bouncePlatform";
 }
 function selectSpike () {
-  currentPlatformType = "spike";
+  currentPlatformType = "US_spikePlatform";
 }
 function selectSticky () {
-  currentPlatformType = "slime";
+  currentPlatformType = "US_slimePlatform";
 }
 function selectHole () {
   currentPlatformType = "hole";
 }
 
 function setPlatform(args) {
-
-  platform = new Platforms(game, args.x, args.y, currentPlatformType);
-  platform = platform.self;
-
+  if (game.time.now > nextPlatformTick) {
+    platform = new Platforms(game, args.x, args.y, currentPlatformType);
+    platform = platform.self;
+    nextPlatformTick = game.time.now + 1500;
+  }
 }
 
+function createPlayer2(id) {
+  player2 = new Player(game, id);
+  player2 = player2.self;
+  player2.animations.add('left', [0]);
+  player2.animations.add('right', [1]);
+  player2.animations.add('front', [2]);
+}
 
-function bouncePlayer() {
+function platformEffect() {
   platformGroup.children.forEach(function(child){
     if (child.body.touching.up && child.type == "US_bouncePlatform") {
-      player.body.velocity.y -= 550;
+      player.body.velocity.y -= 400;
+    } else if (child.body.touching.up && child.type == "US_slimePlatform") {
+      player.body.velocity.x = 0;
+      player.body.velocity.y += 5;
     } else if (child.body.touching.up && child.type == "US_icePlatform") {
-      player.body.velocity.x = player.body.velocity.x / 2;
+      if (player.body.velocity.x > 0) {
+        player.body.velocity.x -= 135;
+      } else if (player.body.velocity.x < 0) {
+        player.body.velocity.x += 135;
+      }
+    } else if (child.body.touching.up && child.type == "US_spikePlatform") {
+      player.body.velocity.y = -250;
+      playerHealth -= 1;
     }
   });
 }

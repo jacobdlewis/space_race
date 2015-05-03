@@ -2,6 +2,14 @@
 /* call functions on all clients using eurecaServer.distribute*/
 
 
+function sendPlatform() {
+
+  eurecaServer.distribute("setPlatform", {
+    x: cursorX,
+    y: cursorY
+  })
+}
+
 function updateMan1(args) {
   if (playerRole != "astronaut1") {
     player.x = args.x
@@ -42,8 +50,15 @@ function movePlayer1() {
       player.body.velocity.x = 150;
       player.frame = 1;
     } else {
-      player.body.velocity.x = 0;
-      player.frame = 2;
+      if (player.body.velocity.x > 0) {
+        player.body.velocity.x -= 5;
+        player.frame = 0;
+      } else if (player.body.velocity.x < 0) {
+        player.body.velocity.x += 5;
+        player.frame = 1;
+      } else if (player.body.velocity.x === 0) {
+        player.frame = 2;
+      }
     }
 
     if (cursors.up.isDown && player.body.touching.down) {
@@ -77,7 +92,7 @@ function movePlayer1() {
       }
     }
 
-    if (player.y > game.camera.y + 480) {
+    if (player.y > game.camera.y + 480 || playerHealth <= 0) {
       gameOverText = game.add.text(game.camera.x + 70, game.camera.y + 160, "GAME OVER", { fontSize: '32px', fill: 'white' });
       cameraScrollRate = 0;
     }
