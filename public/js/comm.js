@@ -1,17 +1,9 @@
 
 /* call functions on all clients using eurecaServer.distribute*/
 
-function sendPlatform() {
-
-  eurecaServer.distribute("setPlatform", {
-    x: cursorX,
-    y: cursorY
-  })
-
-}
 
 function updateMan1(args) {
-  if (playerRole != "astronaut") {
+  if (playerRole != "astronaut1") {
     player.x = args.x
     player.y = args.y
     xVelocity = args.vel
@@ -24,7 +16,9 @@ function updateMan1(args) {
   }
 }
 
-
+function setProp(args) {
+  window[args.prop] = args.val
+}
 
 
 // player1
@@ -54,12 +48,22 @@ function movePlayer1() {
     }
     if (player.y < 8000) {
       playerGravity = 300;
-      cameraScrollRate = .75;
+      if (cameraScrollRate!=.75) {
+        eurecaServer.distribute("setProp",{
+          prop: "cameraScrollRate",
+          val: .75
+        })
+      }
       player.body.gravity.y = playerGravity;
     } else if (player.y < 7000) {
       playerGravity = 275;
       player.body.gravity.y = playerGravity;
-      cameraScrollRate = 1;
+      if (cameraScrollRate!=1) {
+        eurecaServer.distribute("setProp",{
+          prop: "cameraScrollRate",
+          val: 1
+        })
+      }
     }
 
     if (player.y > game.camera.y + 480) {
