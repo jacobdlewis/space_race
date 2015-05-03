@@ -161,7 +161,11 @@ function createGame () {
 
   game.background.inputEnabled = true;
   //game.background.events.onInputDown.add(setPlatform, this);
-  game.background.events.onInputDown.add(sendPlatform,this);
+  if (playerRole === "astronaut1" || playerRole === "astronaut2") {
+    game.background.events.onInputDown.add(jumpPlayer,this);
+  } else if (playerRole === "engineer1" || playerRole === "engineer2") {
+    game.background.events.onInputDown.add(sendPlatform,this);
+  }
 
   startingSpace = game.add.sprite(110, 8750, 'platform');
   game.physics.enable(startingSpace, Phaser.Physics.ARCADE);
@@ -172,8 +176,6 @@ function createGame () {
   player.animations.add('left', [0]);
   player.animations.add('right', [1]);
   player.animations.add('front', [2]);
-
-
 
   // leftButton = game.add.sprite(10, 410, 'leftButton');
   // leftButton.fixedToCamera = true;
@@ -279,7 +281,11 @@ function movePlayerRight () {
 function rightButtonUp () {
   rightButtonDown = false;
 }
-
+function jumpPlayer () {
+  if (player.body.touching.down) {
+  player.body.velocity.y = -300;
+  }
+}
 function movePlayerLeft () {
   leftButtonDown = true;
   player.body.velocity.x = -150;
@@ -287,7 +293,6 @@ function movePlayerLeft () {
 function leftButtonUp () {
   leftButtonDown = false;
 }
-
 function selectSolid () {
   currentPlatformType = "US_solidPlatform";
 }
