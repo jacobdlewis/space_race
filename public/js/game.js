@@ -6,6 +6,7 @@ var eurecaServer;
 var eClient;
 var created = false;
 var playerRole;
+var player2 = false;
 var platform = 0;
 var playerHealth = 2;
 var nextPlatformTick = 0;
@@ -26,22 +27,19 @@ var eurecaClientSetupGame = function() {
           playerList[id].update();
       }
     }
-    eurecaClient.exports.interact = function(action,args) {
-      window[action](args);
-    }
 }
 
 
 /* call functions on all clients using eurecaServer.distribute*/
 
-// function sendPlatform() {
-//   if(playerRole == 'engineer'){
-//     eurecaServer.distribute("setPlatform", {
-//       x: cursorX,
-//       y: cursorY
-//     })
-//   }
-// }
+function sendPlatform() {
+  if(playerRole == 'engineer1'){
+    eurecaServer.distribute("setPlatform", {
+      x: cursorX,
+      y: cursorY
+    })
+  }
+}
 
 
 function chooseRole(role) {
@@ -154,7 +152,6 @@ Platforms = function(game, x, y, type) {
 
 function createGame () {
   eurecaServer.playerHandshake();
-  eurecaServer.getRole();
   game.physics.startSystem(Phaser.Physics.ARCADE);
   game.world.setBounds(0, 0, 320, 9000);
 
@@ -173,6 +170,7 @@ function createGame () {
   player.animations.add('left', [0]);
   player.animations.add('right', [1]);
   player.animations.add('front', [2]);
+
 
   // leftButton = game.add.sprite(10, 410, 'leftButton');
   // leftButton.fixedToCamera = true;
@@ -222,12 +220,24 @@ function createGame () {
   platformGroup.setAll('body.immovable', true);
 
   created = true;
+  setTimeout(function() {
+    eurecaServer.distribute("setProp",{
+      prop: "gameStarted",
+      val: true
+    })
+  },3000)
 
 }
 
 function update () {
+    console.log(playerRole)
     game.physics.arcade.collide(player, startingSpace);
     game.physics.arcade.collide(player, platformGroup, platformEffect);
+    if (player2) {
+      game.physics.arcade.collide(player2, startingSpace);
+      game.physics.arcade.collide(player2, platformGroup);
+    }
+
 
     if(game.camera.y !== game.cameraLastY) {
       game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
@@ -241,7 +251,7 @@ function update () {
     cursorX = game.input.x - 50;
     cursorY = (game.world.y * -1) + game.input.y;
 
-    if (playerRole=="astronaut") {
+    if (playerRole=="astronaut1") {
       movePlayer1();
       eurecaServer.distribute("updateMan1",{
         x: player.x,
@@ -294,6 +304,13 @@ function setPlatform(args) {
   }
 }
 
+function createPlayer2(id) {
+  player2 = new Player(game, id);
+  player2 = player2.self;
+  player2.animations.add('left', [0]);
+  player2.animations.add('right', [1]);
+  player2.animations.add('front', [2]);
+}
 
 function platformEffect() {
   platformGroup.children.forEach(function(child){

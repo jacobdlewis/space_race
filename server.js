@@ -12,7 +12,9 @@ app.get('/', function(req, res){
 //we'll keep clients data here
 var clients = {};
 //determines playerType assignment
-var nextPlayerType = 'astronaut';
+var nextPlayerType = 'astronaut1';
+var playerTypes = ['astronaut1','engineer1','astronaut2','engineer2']
+var ptIndex = 0;
 //determines if new game is needed
 var currentGameId = 0;
 var gameList = {}
@@ -36,21 +38,58 @@ eurecaServer.onConnect(function (conn) {
     clients[conn.id] = {id:conn.id, remote:remote, playerType: nextPlayerType}
     //call setId (defined in the client side)
     remote.setId(conn.id);
-    if(gameList[currentGameId] && gameList[currentGameId].players == 4){
+    
+});
+
+eurecaServer.exports.configurePlayer = function() {
+
+    var conn = this.connection;
+    var client = clients[conn.id];
+    console.log("         ----------     ")
+    console.log(client)
+    console.log("         ----------     ")
+
+    if (!gameList[currentGameId]) {
+
+        gameList[currentGameId]={}
+        gameList[currentGameId].players = 1;
+        client.playerType = playerTypes[ptIndex];
+
+        console.log("         ----------     ")
+        console.log(client.playerType)
+        console.log("         ----------     ")
+        ptIndex++;
+
+    } else if(gameList[currentGameId].players == 1) {
+
+        client.playerType = playerTypes[ptIndex];
+        ptIndex++;
+
+    } else if(gameList[currentGameId].players == 2) {
+
+        gameList[currentGameId].players++;
+        client.playerType = playerTypes[ptIndex];
+        ptIndex++;
+        for (var c in clients){
+            //execute action on client side of all clients
+            clients[c].remote.interact("createPlayer2",conn.id);
+        }
+
+    } else if(gameList[currentGameId].players == 3) {
+
+        gameList[currentGameId].players++;
+
+    } else {
+
         currentGameId++;
         gameList[currentGameId] = {};
         gameList[currentGameId].players = 1;
+
     }
-    else if(!gameList[currentGameId]){
-        gameList[currentGameId]={}
-        gameList[currentGameId].players = 1;
-    } else {
-        gameList[currentGameId].players++;
-    }
-    if(nextPlayerType == 'astronaut'){
-        nextPlayerType = 'engineer'
-    }else {nextPlayerType = 'astronaut'}
-});
+
+    // client.remote.interact("chooseRole",client.playerType)
+    client.remote.chooseRole(client.playerType)
+}
 
 //detect client disconnection
 eurecaServer.onDisconnect(function (conn) {

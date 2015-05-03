@@ -17,6 +17,14 @@ var eurecaClientSetup = function() {
         ready = true;
         eClient = eurecaClient;
     }
+
+    eurecaClient.exports.chooseRole = function(role) {
+      playerRole = role;
+    }
+    
+    eurecaClient.exports.interact = function(action,args) {
+      window[action](args);
+    }
 }
 
 game.state.add('menu', { preload:preload, create:eurecaClientSetup } );
@@ -34,6 +42,20 @@ function create() {
   ENTER.onDown.add(startGame)
 }
 
-function startGame () {
+
+function startGame() {
   game.state.start('playgame');
+  console.log("START")
+  eurecaServer.configurePlayer();
 }
+
+
+
+
+
+
+
+
+
+
+
