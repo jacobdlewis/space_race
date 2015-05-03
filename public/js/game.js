@@ -35,7 +35,8 @@ var eurecaClientSetupGame = function() {
 function sendPlatform() {
   eurecaServer.distribute("setPlatform", {
     x: cursorX,
-    y: cursorY
+    y: cursorY,
+    type: currentPlatformType
   })
 }
 
@@ -253,6 +254,10 @@ function update () {
       game.physics.arcade.collide(player2, platformGroup);
     }
 
+    if (platformGroup.children.length > 2) {
+      platformGroup.children[0].destroy();
+    }
+
 
     if(game.camera.y !== game.cameraLastY) {
       game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
@@ -323,11 +328,29 @@ function selectHole () {
 }
 
 function setPlatform(args) {
-  if (game.time.now > nextPlatformTick) {
-    platform = new Platforms(game, args.x, args.y, currentPlatformType);
+  if (game.time.now > nextPlatformTick && checkPlatformPlacement()) {
+    platform = new Platforms(game, args.x, args.y, args.type);
     platform = platform.self;
     nextPlatformTick = game.time.now + 1500;
   }
+}
+
+function checkPlatformPlacement() {
+  if (platformGroup.children.length < 1) {
+    return true
+  } else {
+    for (var i = 0; i <= platformGroup.children.length; i++) {
+      if (cursorY - (platformGroup.children[i].y > 60) || cursorY - (platformGroup.children[i].y < -60)) {
+        return true
+      } else {
+        return true
+      }
+    }
+  }
+}
+
+function platformPlacementForEach() {
+
 }
 
 function createPlayer2(id) {
