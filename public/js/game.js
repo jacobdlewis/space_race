@@ -313,6 +313,7 @@ function update () {
     if (playerRole=="astronaut2") {
       movePlayer2();
       eurecaServer.distribute("updateMan2",{
+        //should the values below be 'player' instead of 'player2'?
         x: player2.x,
         y: player2.y,
         vel: player2.body.velocity.x
