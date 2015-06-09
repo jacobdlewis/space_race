@@ -2,6 +2,7 @@
 var platformGroup;
 var ready = false;
 var allReady = false;
+var meReady = false;
 var gameStarted = false;
 var eurecaServer;
 var eClient;
@@ -323,7 +324,10 @@ function update () {
 function replaceReadyText() {
   readyText.destroy()
   waitText = game.add.text(100, 8650, "Waiting...", {fill: "#fff", fontSize: "25px"})
-  eurecaServer.sendReadyState();
+  if(!meReady){
+    eurecaServer.sendReadyState();
+  }
+  meReady = true;
 }
 
 // function movePlayerRight () {
