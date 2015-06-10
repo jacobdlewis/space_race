@@ -278,7 +278,6 @@ function createGame () {
 function update () {
     game.physics.arcade.collide(player, startingSpace);
     game.physics.arcade.collide(player, platformGroup, platformEffect);
-    game.physics.arcade.collide(player2, platformGroup, ussrPlatFormEffect);
     if (player2) {
       game.physics.arcade.collide(player2, startingSpace);
       game.physics.arcade.collide(player2, platformGroup);
@@ -286,7 +285,6 @@ function update () {
 
     if(game.camera.y !== game.cameraLastY) {
       game.background.y -= 0.4 * (game.cameraLastY - game.camera.y);
-      //game.paralax_bg.y -= 0.5 * (game.cameraLastY - game.camera.y);
       game.cameraLastY = game.camera.y;
     }
 
@@ -425,24 +423,26 @@ function checkPlatformPlacement() {
 }
 
 function createPlayer2(id) {
-  player2 = new Player(game, id);
-  player2 = player2.self;
- // player2.animations.add('left', [0]);
- // player2.animations.add('right', [1]);
- // player2.animations.add('front', [2]);
+  if(player){
+    player2 = new Player(game, id);
+    player2 = player2.self;
+  }else {
+    player = new Player(game, id);
+    player = player.self
+  }
 }
 
 function platformEffect() {
   platformGroup.children.forEach(function(child){
-    if (child.body.touching.up && child.type == "US_bouncePlatform") {
+    if (child.body.touching.up) {
       player.body.velocity.y -= 400;
       player2.body.velocity.y -= 400;
-    } else if (child.body.touching.up && child.type == "US_slimePlatform") {
+    } else if (child.body.touching.up) {
       player.body.velocity.x = 0;
       player.body.velocity.y += 5;
       player2.body.velocity.x = 0;
       player2.body.velocity.y += 5;
-    } else if (child.body.touching.up && child.type == "US_icePlatform") {
+    } else if (child.body.touching.up) {
       if (player.body.velocity.x > 0) {
         player.body.velocity.x -= 135;
         player2.body.velocity.x -= 135;
@@ -450,38 +450,7 @@ function platformEffect() {
         player.body.velocity.x += 135;
         player2.body.velocity.x += 135;
       }
-    } else if (child.body.touching.up && child.type == "US_spikePlatform") {
-      player.body.velocity.y = -250;
-      if (playerHealth === 2) {
-        health2.destroy();
-      }
-      if (playerHealth ===1) {
-        health1.destroy();
-      }
-      playerHealth -= 1;
-    }
-  });
-}
-
-function ussrPlatFormEffect() {
-  platformGroup.children.forEach(function(child){
-    if (child.body.touching.up && child.type == "USSR_bouncePlatform") {
-      player.body.velocity.y -= 400;
-      player2.body.velocity.y -= 400;
-    } else if (child.body.touching.up && child.type == "USSR_slimePlatform") {
-      player.body.velocity.x = 0;
-      player.body.velocity.y += 5;
-      player2.body.velocity.x = 0;
-      player2.body.velocity.y += 5;
-    } else if (child.body.touching.up && child.type == "USSR_icePlatform") {
-      if (player.body.velocity.x > 0) {
-        player.body.velocity.x -= 135;
-        player2.body.velocity.x -= 135;
-      } else if (player.body.velocity.x < 0) {
-        player.body.velocity.x += 135;
-        player2.body.velocity.x += 135;
-      }
-    } else if (child.body.touching.up && child.type == "USSR_spikePlatform") {
+    } else if (child.body.touching.up) {
       player.body.velocity.y = -250;
       if (playerHealth === 2) {
         health2.destroy();
