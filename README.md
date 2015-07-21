@@ -8,6 +8,8 @@ A 2 vs. 2 co-op game for play in the browser on mobile devices. Teams consist of
 
 Made @ Hack Tennessee 7 (May 2015)
 
+Made by: Ed Dean, Kyle McCormick, Jacob Lewis, Tyler Black, Ben Taylor, and Luke Lancaster
+
 ## Setup for dev
 
 Install dependencies
